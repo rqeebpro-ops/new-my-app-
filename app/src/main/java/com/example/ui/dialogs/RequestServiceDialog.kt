@@ -185,62 +185,6 @@ fun RequestServiceDialog(
                     }
                 } else {
                     // Form
-                    Text(
-                        text = "الخدمة المطلوبة: $selectedSubCategory",
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        color = AccentTeal
-                    )
-
-                    // Subscription fee and payment info banner
-                    val servicePricing = when {
-                        selectedSubCategory.contains("بيانات", true) || selectedSubCategory.contains("ملفات", true) -> Triple("4000 YER", "30 SAR", "8 USD")
-                        selectedSubCategory.contains("مستندات", true) || selectedSubCategory.contains("وثائق", true) -> Triple("3000 YER", "22 SAR", "6 USD")
-                        selectedSubCategory.contains("شفرات", true) || selectedSubCategory.contains("تشفير", true) -> Triple("3000 YER", "22 SAR", "6 USD")
-                        selectedSubCategory.contains("حسابات", true) || selectedSubCategory.contains("اختراق", true) -> Triple("3000 YER", "22 SAR", "6 USD")
-                        selectedSubCategory.contains("فشل", true) || selectedSubCategory.contains("محاكي", true) -> Triple("7000 YER", "52 SAR", "14 USD")
-                        else -> Triple("2000 YER", "15 SAR", "4 USD")
-                    }
-
-                    Surface(
-                        shape = RoundedCornerShape(12.dp),
-                        color = ImmersiveSurfaceCard,
-                        border = BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.4f)),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(12.dp),
-                            verticalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
-                                ) {
-                                    Icon(Icons.Default.Payment, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(16.dp))
-                                    Text("قيمة اشتراك هذه الخدمة:", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = TextWhite)
-                                }
-                                Text(servicePricing.first, fontSize = 13.sp, fontWeight = FontWeight.ExtraBold, color = EmeraldPrimary)
-                            }
-                            Text(
-                                text = "ما يقابلها بالعملات: (${servicePricing.second} / ${servicePricing.third}) - اشتراك منفصل",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = TextSlate
-                            )
-                            Text(
-                                text = "الحسابات المعتمدة: الكريمي (3001845477) | جيب / ون كاش / جوالي (782916997)",
-                                fontSize = 10.sp,
-                                color = TextMuted,
-                                lineHeight = 14.sp
-                            )
-                        }
-                    }
-
                     OutlinedTextField(
                         value = clientName,
                         onValueChange = { clientName = it },

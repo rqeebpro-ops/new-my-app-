@@ -41,31 +41,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
-import com.example.ui.theme.AccentBlue
-import com.example.ui.theme.AccentBlueContainer
-import com.example.ui.theme.AccentOrange
-import com.example.ui.theme.AccentPurple
-import com.example.ui.theme.AccentPurpleContainer
-import com.example.ui.theme.AccentTeal
-import com.example.ui.theme.DarkButtonBg
-import com.example.ui.theme.DarkButtonBorder
-import com.example.ui.theme.EmeraldLight
-import com.example.ui.theme.EmeraldPrimary
-import com.example.ui.theme.ImmersiveBg
-import com.example.ui.theme.ImmersiveBorder
-import com.example.ui.theme.ImmersiveBorderSubtle
-import com.example.ui.theme.ImmersiveSurfaceCard
-import com.example.ui.theme.ImmersiveSurfaceVariant
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextSlate
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.*
 import com.example.util.AppIntentUtils
 
 @Composable
@@ -80,69 +65,118 @@ fun ContactUsScreen() {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(top = 12.dp, bottom = 32.dp)
     ) {
-        // Brand Profile Card
+        // Brand Profile Card with Official Banner & Logo
         item {
             Card(
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = ImmersiveSurfaceCard),
-                border = BorderStroke(1.dp, ImmersiveBorder),
+                border = BorderStroke(1.dp, CyberCyan.copy(alpha = 0.35f)),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Column(
-                    modifier = Modifier.padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
-                ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    // Official Rqeebpro Brand Banner
                     Box(
                         modifier = Modifier
-                            .size(76.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(ImmersiveSurfaceVariant)
-                            .border(1.dp, ImmersiveBorderSubtle, RoundedCornerShape(20.dp)),
-                        contentAlignment = Alignment.Center
+                            .fillMaxWidth()
+                            .height(130.dp)
                     ) {
                         Image(
-                            painter = painterResource(id = R.drawable.raqeeb_icon_1788464615035),
-                            contentDescription = "شعار رقيب",
-                            modifier = Modifier.size(64.dp)
+                            painter = painterResource(id = R.drawable.rqeebpro_banner_1791221166842),
+                            contentDescription = "بانر مركز رقيب الرسمي",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(
+                                    Brush.verticalGradient(
+                                        colors = listOf(
+                                            Color(0x22000000),
+                                            Color(0x99060B18),
+                                            ImmersiveSurfaceCard
+                                        )
+                                    )
+                                )
                         )
                     }
 
-                    Text(
-                        text = "مركز رقيب للبرمجة والتسويق",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = TextWhite
-                    )
-
-                    Text(
-                        text = "الوجهة الأولى للحلول البرمجية الشاملة للهواتف الذكية وحملات التسويق الرقمي وإدارة الهوية",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = TextSlate
-                    )
-
-                    Surface(
-                        shape = RoundedCornerShape(50.dp),
-                        color = Color(0x3334D399),
-                        border = BorderStroke(1.dp, Color(0x6634D399))
+                    Column(
+                        modifier = Modifier.padding(20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(6.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                        Box(
+                            modifier = Modifier
+                                .size(82.dp)
+                                .clip(RoundedCornerShape(22.dp))
+                                .background(DarkButtonBg)
+                                .border(1.5.dp, CyberCyan.copy(alpha = 0.7f), RoundedCornerShape(22.dp)),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Icon(
-                                Icons.Default.Verified,
-                                contentDescription = null,
-                                tint = EmeraldPrimary,
-                                modifier = Modifier.size(16.dp)
+                            Image(
+                                painter = painterResource(id = R.drawable.rqeebpro_logo_1791221152168),
+                                contentDescription = "شعار رقيب برو الرسمي",
+                                modifier = Modifier.size(68.dp)
                             )
-                            Text(
-                                text = "خدمة موثوقة وسرية تامة لبيانات العملاء",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = EmeraldPrimary,
-                                fontWeight = FontWeight.Bold
-                            )
+                        }
+
+                        Text(
+                            text = "مركز رقيب للبرمجة والتسويق",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = TextWhite
+                        )
+
+                        Text(
+                            text = "الوجهة الأولى للحلول البرمجية الشاملة للهواتف الذكية وحملات التسويق الرقمي وإدارة الهوية",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = TextSlate,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Surface(
+                                shape = RoundedCornerShape(50.dp),
+                                color = CyberCyanContainer,
+                                border = BorderStroke(1.dp, CyberCyan.copy(alpha = 0.4f))
+                            ) {
+                                Row(
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Default.Verified,
+                                        contentDescription = null,
+                                        tint = CyberCyan,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Text(
+                                        text = "مركز موثق ومعتمد رسمياً",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = CyberCyan,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                }
+                            }
+
+                            Surface(
+                                shape = RoundedCornerShape(50.dp),
+                                color = EmeraldContainer,
+                                border = BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.5f))
+                            ) {
+                                Text(
+                                    text = "rqeebpro3 (الإصدار الثالث)",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = EmeraldPrimary,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                                )
+                            }
                         }
                     }
                 }

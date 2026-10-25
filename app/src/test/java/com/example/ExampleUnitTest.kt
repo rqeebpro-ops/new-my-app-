@@ -1,7 +1,8 @@
 package com.example
 
-import com.example.data.RaqeebRepository
 import com.example.model.PhoneProblemType
+import com.example.model.PhoneModelsCatalog
+import com.example.model.ProblemServicesCatalog
 import com.example.model.ServiceSection
 import org.junit.Assert.*
 import org.junit.Test
@@ -13,16 +14,22 @@ class ExampleUnitTest {
   }
 
   @Test
-  fun testRepositoryProvidesAllPhoneServices() {
-    val repository = RaqeebRepository()
-    val services = repository.getPhoneServices()
-    assertTrue(services.isNotEmpty())
-    assertTrue(services.any { it.type == PhoneProblemType.LOCK_BYPASS })
-    assertTrue(services.any { it.type == PhoneProblemType.CARRIER_UNLOCK })
-    assertTrue(services.any { it.type == PhoneProblemType.ACCOUNT_RECOVERY })
-    assertTrue(services.any { it.type == PhoneProblemType.DATA_RECOVERY })
-    assertTrue(services.any { it.type == PhoneProblemType.ARABIZATION })
-    assertTrue(services.any { it.type == PhoneProblemType.DATA_ACTIVATION_3G_4G })
+  fun testProblemServicesCatalogProvidesAllProblemTypes() {
+    val options = ProblemServicesCatalog.options
+    assertTrue(options.isNotEmpty())
+    assertTrue(options.any { it.targetSection == ServiceSection.LOCK_RECOVERY_SIMULATOR })
+    assertTrue(options.any { it.targetSection == ServiceSection.APN_SETTINGS })
+    assertTrue(options.any { it.targetSection == ServiceSection.DATA_RECOVERY_SCANNER })
+    assertTrue(options.any { it.targetSection == ServiceSection.PHONE_SOLUTIONS })
+    assertTrue(options.any { it.targetSection == ServiceSection.MARKETING })
+  }
+
+  @Test
+  fun testPhoneModelsCatalog() {
+    val models = PhoneModelsCatalog.phoneModelsList
+    assertTrue(models.isNotEmpty())
+    assertTrue(models.any { it.contains("Samsung") })
+    assertTrue(models.any { it.contains("Xiaomi") })
   }
 
   @Test

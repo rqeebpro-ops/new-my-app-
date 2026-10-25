@@ -1308,6 +1308,36 @@ fun FrpTechToolsTab(
                 )
             }
 
+            // Real Phone System Actions
+            val context = LocalContext.current
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = { AppIntentUtils.openSecuritySettings(context) },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TextWhite),
+                    border = BorderStroke(1.dp, ImmersiveBorder)
+                ) {
+                    Icon(Icons.Default.Security, contentDescription = null, modifier = Modifier.size(16.dp), tint = AccentTeal)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("ضبط أمان الهاتف فعلياً", fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+                OutlinedButton(
+                    onClick = { AppIntentUtils.openDeveloperSettings(context) },
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = TextWhite),
+                    border = BorderStroke(1.dp, ImmersiveBorder)
+                ) {
+                    Icon(Icons.Default.Settings, contentDescription = null, modifier = Modifier.size(16.dp), tint = AccentOrange)
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("خيارات المطور وتصحيح USB", fontSize = 11.sp, fontWeight = FontWeight.SemiBold)
+                }
+            }
+
             Button(
                 onClick = onContactWhatsApp,
                 modifier = Modifier.fillMaxWidth(),

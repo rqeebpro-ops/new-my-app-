@@ -1,5 +1,7 @@
 package com.example.data
 
+import com.example.data.local.ActivationCodeDao
+import com.example.data.local.ActivationCodeEntity
 import com.example.data.local.ClientSubscriptionDao
 import com.example.data.local.ClientSubscriptionEntity
 import com.example.data.local.ServiceRequestDao
@@ -13,8 +15,39 @@ import kotlinx.coroutines.flow.Flow
 
 class RaqeebRepository(
     private val requestDao: ServiceRequestDao,
-    private val subscriptionDao: ClientSubscriptionDao
+    private val subscriptionDao: ClientSubscriptionDao,
+    private val activationCodeDao: ActivationCodeDao
 ) {
+
+    // Activation Codes Management
+    val allActivationCodes: Flow<List<ActivationCodeEntity>> = activationCodeDao.getAllCodes()
+    val availableActivationCodes: Flow<List<ActivationCodeEntity>> = activationCodeDao.getAvailableCodes()
+    val activationCodesCount: Flow<Int> = activationCodeDao.getCodesCount()
+    val usedActivationCodesCount: Flow<Int> = activationCodeDao.getUsedCodesCount()
+
+    suspend fun getActivationCodeByValue(code: String): ActivationCodeEntity? {
+        return activationCodeDao.getCodeByValue(code.trim())
+    }
+
+    suspend fun insertActivationCode(code: ActivationCodeEntity): Long {
+        return activationCodeDao.insertCode(code)
+    }
+
+    suspend fun updateActivationCode(code: ActivationCodeEntity) {
+        activationCodeDao.updateCode(code)
+    }
+
+    suspend fun markActivationCodeUsed(code: String, isUsed: Boolean = true, status: String = "مستخدم ومفعل") {
+        activationCodeDao.markCodeUsage(code.trim(), isUsed, status, System.currentTimeMillis())
+    }
+
+    suspend fun updateActivationCodeStatus(id: Long, status: String) {
+        activationCodeDao.updateCodeStatus(id, status)
+    }
+
+    suspend fun deleteActivationCode(id: Long) {
+        activationCodeDao.deleteById(id)
+    }
 
     // User Requests
     val allRequests: Flow<List<ServiceRequestEntity>> = requestDao.getAllRequests()
@@ -84,28 +117,28 @@ class RaqeebRepository(
                     "استخراج الصور ومقاطع الفيديو القابلة للاسترداد وحفظها مباشرة في مجلد التنزيلات.",
                     "في حالات الفورمات الكامل أو تلف الميموري: تسليم الجهاز لمختبر رقيب للاسترداد العميق عبر تفريغ ذواكر eMMC/UFS."
                 ),
-                warningNote = "سعر استرداد البيانات والملفات 4000 YER (أو 30 SAR / 8 USD) كاشتراك منفصل مخصص لهذه الخدمة."
+                warningNote = "سعر استرداد البيانات والملفات 30 SAR (أو 8 USD) كاشتراك منفصل مخصص لهذه الخدمة."
             ),
             PhoneServiceDetail(
                 id = "documents_recovery_service",
                 type = PhoneProblemType.DOCUMENTS_RECOVERY,
                 title = "استرجاع المستندات والوثائق وملفات PDF المحذوفة",
                 description = "استرجاع ملفات العمل المحذوفة، مستندات Word/Excel، ملفات PDF، رسائل ومحادثات وقواعد بيانات التطبيقات المفقودة.",
-                pricing = ServicePricing(yer = 3000, sar = 22, usd = 6),
+                pricing = ServicePricing(yer = 0, sar = 22, usd = 6),
                 steps = listOf(
                     "فحص مجلدات التطبيقات والمستندات في مسارات النظام والأقسام المخبأة.",
                     "استخراج وثائق PDF وملفات الأوفيس المحذوفة وفك تشفير الملفات التالفة جزئياً.",
                     "إعادة بناء وتصدير المستندات إلى صيغها الأصلية القابلة للفتح والقراءة.",
                     "تأمين نسخ احتياطية سحابية ومحلية لضمان عدم فقدان الملفات مجدداً."
                 ),
-                warningNote = "سعر استرجاع المستندات 3000 YER (أو 22 SAR / 6 USD) كاشتراك منفصل."
+                warningNote = "سعر استرجاع المستندات 22 SAR (أو 6 USD) كاشتراك منفصل."
             ),
             PhoneServiceDetail(
                 id = "carrier_unlock_cdma_gsm",
                 type = PhoneProblemType.CARRIER_UNLOCK,
                 title = "فك شفرات الهاتف والشبكات المغلقة (CDMA / GSM)",
                 description = "فك شفرات شبكات الهواتف المقفلة لجميع الشركات العالمية والمحلية لتشغيل جميع شرائح الاتصال.",
-                pricing = ServicePricing(yer = 3000, sar = 22, usd = 6),
+                pricing = ServicePricing(yer = 0, sar = 22, usd = 6),
                 steps = listOf(
                     "تحديد نوع الشبكة المغلق عليها الهاتف (Sprint, Verizon, AT&T, T-Mobile, Docomo).",
                     "استخراج رقم الهوية التسلسلي للجهاز (IMEI) عبر الاتصال على كود *#06#.",
@@ -114,14 +147,14 @@ class RaqeebRepository(
                     "تفعيل خيارات المطور وتصحيح أخطاء USB للتوصيل المباشر مع مركز رقيب للبرمجة."
                 ),
                 quickActionCode = "*#06#",
-                warningNote = "سعر فك شفرات الهاتف 3000 YER (أو 22 SAR / 6 USD) كاشتراك منفصل."
+                warningNote = "سعر فك شفرات الهاتف 22 SAR (أو 6 USD) كاشتراك منفصل."
             ),
             PhoneServiceDetail(
                 id = "account_recovery_guide",
                 type = PhoneProblemType.ACCOUNT_RECOVERY,
                 title = "إسترجاع الحسابات المخترقة والمفقودة",
                 description = "استعادة حسابات Google، واتساب المحظور أو المسروق، فيسبوك، إنستغرام وتيك توك مع استرجاع المصادقة الثنائية.",
-                pricing = ServicePricing(yer = 3000, sar = 22, usd = 6),
+                pricing = ServicePricing(yer = 0, sar = 22, usd = 6),
                 steps = listOf(
                     "استرجاع حساب Google/Gmail: التوجه لبوابة الاسترداد الرسمية عبر استخدام آخر كلمة مرور معروفة ورقم الهاتف الاحتياطي.",
                     "استرجاع واتساب المسروق: طلب إعادة إرسال كود التحقق وتفعيل التحقق بخطوتين وتجميد الجلسات السابقة.",
@@ -129,14 +162,14 @@ class RaqeebRepository(
                     "إلغاء حظر أرقام الواتساب: صياغة رسالة رسمية لفريق الدعم الفني لرفع الحظر المؤقت والدائم.",
                     "خدمة التدخل المباشر من خبراء رقيب لاسترجاع الحسابات المعقدة وتأمينها تماماً."
                 ),
-                warningNote = "سعر استرجاع الحسابات المخترقة 3000 YER (أو 22 SAR / 6 USD) كاشتراك منفصل."
+                warningNote = "سعر استرجاع الحسابات المخترقة 22 SAR (أو 6 USD) كاشتراك منفصل."
             ),
             PhoneServiceDetail(
                 id = "failure_lock_simulator",
                 type = PhoneProblemType.FAILURE_LOCK_SIMULATOR,
                 title = "محاكي الفشل وتخطي أقفال وإصلاح النظام المتقدم",
                 description = "نظام المحاكاة والفحص البرمجي المتطور لتشخيص وتجاوز فشل الإقلاع، وحل أعطال النظام، وتخطي الأقفال المستعصية.",
-                pricing = ServicePricing(yer = 7000, sar = 52, usd = 14),
+                pricing = ServicePricing(yer = 0, sar = 52, usd = 14),
                 steps = listOf(
                     "ربط الهاتف بوضع التشخيص البرمجي ومحاكاة أعطال الإقلاع Bootloop / Crash Dump.",
                     "فحص سجلات النواة والكيرنل لتحديد سبب الانهيار وفشل الإقلاع.",
@@ -144,14 +177,14 @@ class RaqeebRepository(
                     "إعادة تهيئة أقسام التمهيد (Boot/Recovery/System) واستقرار النظام بالكامل."
                 ),
                 quickActionCode = "*#*#4636#*#*",
-                warningNote = "سعر محاكي الفشل والأقفال المتقدمة 7000 YER (أو 52 SAR / 14 USD) كاشتراك منفصل."
+                warningNote = "سعر محاكي الفشل والأقفال المتقدمة 52 SAR (أو 14 USD) كاشتراك منفصل."
             ),
             PhoneServiceDetail(
                 id = "lock_bypass_frp",
                 type = PhoneProblemType.LOCK_BYPASS,
                 title = "فك إقفال الشاشة وحسابات حماية جوجل (FRP Bypass)",
                 description = "حلول متقدمة لتخطي قفل الشاشة (النمط، رمز PIN، البصمة) وتخطي حساب جوجل بعد الفورمات.",
-                pricing = ServicePricing(yer = 2000, sar = 15, usd = 4),
+                pricing = ServicePricing(yer = 0, sar = 15, usd = 4),
                 steps = listOf(
                     "تحديد موديل الهاتف وإصدار الأندرويد بدقة من شاشة البداية أو وضع الريكفري.",
                     "في حال نسيان قفل الشاشة: استخدام طرق الاسترداد عبر حساب جوجل الرسمي (Find My Device).",
@@ -160,14 +193,14 @@ class RaqeebRepository(
                     "إمكانية فتح أجهزة كوالكوم وميدياتك عبر Test Point في مركز الصيانة المعتمد."
                 ),
                 quickActionCode = "*#*#4636#*#*",
-                warningNote = "سعر فك إقفال الشاشة وFRP هو 2000 YER (أو 15 SAR / 4 USD) كاشتراك منفصل."
+                warningNote = "سعر فك إقفال الشاشة وFRP هو 15 SAR (أو 4 USD) كاشتراك منفصل."
             ),
             PhoneServiceDetail(
                 id = "arabization_system",
                 type = PhoneProblemType.ARABIZATION,
                 title = "تعريب الهاتف بالكامل وإضافة اللغات",
                 description = "تعريب الأجهزة الأمريكية والكورية والصينية التي لا تحتوي على لغة عربية في القوائم الرسمية.",
-                pricing = ServicePricing(yer = 2000, sar = 15, usd = 4),
+                pricing = ServicePricing(yer = 0, sar = 15, usd = 4),
                 steps = listOf(
                     "تفعيل خيارات المطور (Developer Options) بالضغط 7 مرات على رقم الإصدار (Build Number).",
                     "تفعيل تصحيح أخطاء USB (USB Debugging).",
@@ -177,94 +210,31 @@ class RaqeebRepository(
                     "للهواتف المستعصية: تفليش روم رسمي معرب مخصص أو CSC عبر مركز رقيب."
                 ),
                 settingsAction = "android.settings.LOCALE_SETTINGS",
-                warningNote = "سعر تعريب الهاتف 2000 YER (أو 15 SAR / 4 USD) كاشتراك منفصل."
+                warningNote = "سعر تعريب الهاتف 15 SAR (أو 4 USD) كاشتراك منفصل."
             ),
             PhoneServiceDetail(
                 id = "data_activation_3g_4g_service",
                 type = PhoneProblemType.DATA_ACTIVATION_3G_4G,
-                title = "تفعيل وضبط بيانات 3G / 4G LTE",
-                description = "ضبط نقاط الوصول (APN) وحل مشكلة عدم ظهور علامة البيانات في هواتف يمن موبايل وسبأفون ويو والشبكات الأخرى.",
-                pricing = ServicePricing(yer = 2000, sar = 15, usd = 4),
+                title = "تفعيل وضبط بيانات 3G / 4G LTE لشبكات الوطن العربي",
+                description = "ضبط نقاط الوصول (APN) وفك شفرات الشبكة لجميع شبكات الاتصالات في الدول العربية (السعودية، اليمن، مصر، الإمارات، الكويت، قطر، عمان، العراق، الأردن، وغيرها).",
+                pricing = ServicePricing(yer = 0, sar = 15, usd = 4),
                 steps = listOf(
-                    "اختيار نوع الشبكة والشريحة من قائمة ملفات الـ APN الجاهزة في التطبيق.",
-                    "الضغط على زر 'نسخ الإعدادات' أو 'فتح إعدادات APN' في الهاتف.",
-                    "إضافة نقطة وصول جديدة وإدخال الاسم والقيمة (مثل ymobile ليمن موبايل أو internet لشركة يو).",
-                    "ضبط نوع APN على: default,mms,supl واختيار البروتوكول IPv4/IPv6.",
-                    "حفظ نقطة الوصول وإعادة تشغيل بيانات الهاتف لتفعيل 4G فوراً.",
-                    "في حال عدم ظهور التغطية: الاتصال برمز فحص الترددات *#*#4636#*#* وتحديد نمط LTE/CDMA أو LTE/GSM."
+                    "اختيار الدولة والشبكة الخاصة بك من قائمة شبكات الوطن العربي المتوفرة بالتطبيق.",
+                    "الضغط على زر 'نسخ الإعدادات' أو 'فتح إعدادات APN' المباشر في هاتفك.",
+                    "إضافة نقطة وصول جديدة وإدخال الاسم وقيمة الـ APN المحددة لشبكتك.",
+                    "ضبط نوع APN على: default,supl واختيار البروتوكول IPv4/IPv6.",
+                    "حفظ نقطة الوصول وإعادة تشغيل بيانات الهاتف لتفعيل 4G/5G فوراً.",
+                    "في حال كانت الشريحة مقفلة (SIM Locked): إدخال كود فك الشفرة NCK المخصص أو استخدام الرمز الهندسي *#*#4636#*#* لفتح القفل."
                 ),
                 quickActionCode = "*#*#4636#*#*",
                 settingsAction = "android.settings.APN_SETTINGS",
-                warningNote = "سعر تفعيل وضبط بيانات 3G/4G هو 2000 YER (أو 15 SAR / 4 USD) كاشتراك منفصل."
+                warningNote = "سعر تفعيل وضبط بيانات 3G/4G وفك الشفرة هو 15 SAR (أو 4 USD) كاشتراك منفصل."
             )
         )
     }
 
     fun getApnProfiles(): List<ApnProfile> {
-        return listOf(
-            ApnProfile(
-                id = "ymobile_4g",
-                carrierName = "يمن موبايل (Yemen Mobile 4G LTE)",
-                country = "اليمن",
-                networkType = "4G LTE",
-                apnName = "Yemen Mobile 4G",
-                apnValue = "ymobile",
-                dialNumber = "#777",
-                username = "ymobile",
-                password = "v4g",
-                instructions = "ادخل الاسم: Yemen Mobile ، الـ APN: ymobile ، اسم المستخدم: ymobile ، كلمة المرور: v4g ، نوع الـ APN: default,supl"
-            ),
-            ApnProfile(
-                id = "ymobile_3g",
-                carrierName = "يمن موبايل 3G (CDMA)",
-                country = "اليمن",
-                networkType = "3G CDMA",
-                apnName = "Yemen Mobile 3G",
-                apnValue = "#777",
-                dialNumber = "#777",
-                username = "ymobile",
-                password = "ymobile",
-                instructions = "ادخل الاسم: YM3G ، الـ APN: #777 ، اسم المستخدم: ymobile ، كلمة المرور: ymobile"
-            ),
-            ApnProfile(
-                id = "you_4g",
-                carrierName = "يو (YOU Telecom 4G / MTN)",
-                country = "اليمن",
-                networkType = "4G / 3G",
-                apnName = "YOU Internet",
-                apnValue = "internet",
-                dialNumber = "*121#",
-                instructions = "ادخل الاسم: YOU Internet ، الـ APN: internet ، اترك اسم المستخدم وكلمة السر فارغين."
-            ),
-            ApnProfile(
-                id = "sabafon_4g",
-                carrierName = "سبأفون (Sabafon 4G / 3G)",
-                country = "اليمن",
-                networkType = "4G / 3G",
-                apnName = "Sabafon Net",
-                apnValue = "sabafon.net",
-                dialNumber = "#121*",
-                instructions = "ادخل الاسم: Sabafon ، الـ APN: sabafon.net ، نوع الـ APN: default"
-            ),
-            ApnProfile(
-                id = "stc_sa",
-                carrierName = "STC السعودية (Jawalnet)",
-                country = "السعودية",
-                networkType = "5G / 4G",
-                apnName = "STC Jawalnet",
-                apnValue = "jawalnet.com.sa",
-                instructions = "ادخل الاسم: Jawalnet ، الـ APN: jawalnet.com.sa"
-            ),
-            ApnProfile(
-                id = "mobily_sa",
-                carrierName = "موبايلي (Mobily)",
-                country = "السعودية",
-                networkType = "5G / 4G",
-                apnName = "Mobily Web",
-                apnValue = "web1",
-                instructions = "ادخل الاسم: Mobily Web ، الـ APN: web1 مسبق الدفع أو web2 للفواتير."
-            )
-        )
+        return ArabCarrierDatabase.getAllProfiles()
     }
 
     fun getMarketingPackages(): List<MarketingPackage> {

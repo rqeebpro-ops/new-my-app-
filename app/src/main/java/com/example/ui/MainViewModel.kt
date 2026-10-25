@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.RaqeebRepository
+import com.example.data.local.ActivationCodeEntity
 import com.example.data.local.AppDatabase
 import com.example.data.local.ClientSubscriptionEntity
 import com.example.data.local.ServiceRequestEntity
@@ -16,6 +17,7 @@ import com.example.model.PhoneServiceDetail
 import com.example.model.ScannedMediaItem
 import com.example.model.ServiceSection
 import com.example.model.UserProfile
+import com.example.util.AppIntentUtils
 import com.example.util.MediaRecoveryScanner
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,18 +31,154 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository: RaqeebRepository
 
+    // User Profile & Subscription State
+    private val prefs = application.getSharedPreferences("raqeeb_user_prefs", Context.MODE_PRIVATE)
+
+    private val _userProfile = MutableStateFlow(
+        UserProfile(
+            fullName = prefs.getString("user_name", "") ?: "",
+            phoneNumber = prefs.getString("user_phone", "") ?: "",
+            phoneModel = prefs.getString("phone_model", "") ?: "",
+            problemType = prefs.getString("problem_type", "") ?: "",
+            selectedServiceId = prefs.getString("service_id", "") ?: "",
+            selectedServiceName = prefs.getString("service_name", "") ?: "",
+            paymentAccountUsed = prefs.getString("payment_account", "") ?: "",
+            paymentTransactionRef = prefs.getString("payment_ref", "") ?: "",
+            currency = try {
+                val currStr = prefs.getString("currency", PaymentCurrency.SAR.name)
+                if (currStr == "YER") PaymentCurrency.SAR else PaymentCurrency.valueOf(currStr ?: PaymentCurrency.SAR.name)
+            } catch (_: Exception) {
+                PaymentCurrency.SAR
+            },
+            servicePriceAmount = prefs.getInt("service_price", 15),
+            isSubscribed = prefs.getBoolean("is_subscribed", false),
+            subscriptionTimestamp = prefs.getLong("sub_time", 0L)
+        )
+    )
+    val userProfile: StateFlow<UserProfile> = _userProfile.asStateFlow()
+
+    private val _remainingTimeText = MutableStateFlow("03:00:00")
+    val remainingTimeText: StateFlow<String> = _remainingTimeText.asStateFlow()
+
+    fun isSectionAllowed(section: ServiceSection): Boolean {
+        return _userProfile.value.isSectionAllowed(section)
+    }
+
     init {
         val db = AppDatabase.getDatabase(application)
-        repository = RaqeebRepository(db.serviceRequestDao(), db.clientSubscriptionDao())
+        repository = RaqeebRepository(
+            db.serviceRequestDao(),
+            db.clientSubscriptionDao(),
+            db.activationCodeDao()
+        )
+
+        // Sync activation codes to AppIntentUtils registry
+        viewModelScope.launch {
+            repository.allActivationCodes.collect { codes ->
+                codes.forEach { codeEntity ->
+                    if (codeEntity.status != "معلق") {
+                        AppIntentUtils.registerActivationPin(codeEntity.code)
+                    }
+                }
+            }
+        }
+
+        // Seed initial activation codes if database is fresh
+        viewModelScope.launch {
+            val initial = repository.getActivationCodeByValue(AppIntentUtils.ACTIVATION_SECRET_PIN)
+            if (initial == null) {
+                repository.insertActivationCode(
+                    ActivationCodeEntity(
+                        code = "8492",
+                        subscriptionType = "اشتراك شامل VIP لجميع الخدمات",
+                        clientName = "المالك (م. عبد الرقيب فرج)",
+                        clientPhone = "785502919",
+                        priceAmount = 0,
+                        currency = "SAR",
+                        durationLabel = "مدى الحياة",
+                        isUsed = false,
+                        status = "نشط ومتاح",
+                        notes = "كود المالك السري الرئيسي المعتمد لجميع الخدمات"
+                    )
+                )
+                repository.insertActivationCode(
+                    ActivationCodeEntity(
+                        code = "7735",
+                        subscriptionType = "اشتراك حلول وبرمجة الهواتف وفك الشفرات",
+                        clientName = "كود احتياطي معتمد",
+                        clientPhone = "785502919",
+                        priceAmount = 15,
+                        currency = "SAR",
+                        durationLabel = "سنة كاملة",
+                        isUsed = false,
+                        status = "نشط ومتاح",
+                        notes = "كود تفعيل باقة برمجة الهاتف وفك القفل"
+                    )
+                )
+                repository.insertActivationCode(
+                    ActivationCodeEntity(
+                        code = "7829",
+                        subscriptionType = "اشتراك التسويق الرقمي واسترجاع البيانات",
+                        clientName = "كود احتياطي معتمد",
+                        clientPhone = "782916997",
+                        priceAmount = 4000,
+                        currency = "YER",
+                        durationLabel = "سنة كاملة",
+                        isUsed = false,
+                        status = "نشط ومتاح",
+                        notes = "كود تفعيل باقة التسويق الرقمي واسترجاع الصور المحذوفة"
+                    )
+                )
+            }
+        }
+
+        // 3-hour continuous subscription ticker loop
+        viewModelScope.launch {
+            while (true) {
+                val profile = _userProfile.value
+                if (profile.isSubscribed && profile.subscriptionTimestamp > 0L) {
+                    val remainingMs = profile.remainingTimeMillis()
+                    if (remainingMs <= 0L) {
+                        // 3 hours expired! Revoke active session
+                        prefs.edit().putBoolean("is_subscribed", false).apply()
+                        _userProfile.value = profile.copy(isSubscribed = false)
+                        _remainingTimeText.value = "00:00:00 (منتهي)"
+                    } else {
+                        _remainingTimeText.value = profile.getFormattedRemainingTime()
+                    }
+                } else {
+                    _remainingTimeText.value = "03:00:00"
+                }
+                delay(1000L)
+            }
+        }
     }
 
     // Owner Database & Administration
     private val _isOwnerAuthenticated = MutableStateFlow(false)
     val isOwnerAuthenticated: StateFlow<Boolean> = _isOwnerAuthenticated.asStateFlow()
 
+    fun authenticateOwner(phone: String, pass: String): Boolean {
+        val cleanPhone = phone.trim().filter { it.isDigit() }
+        val cleanPass = pass.trim()
+        val validPhones = listOf(
+            "785502919", "782916997", "967785502919", "967782916997",
+            "0785502919", "0782916997"
+        )
+        val isPhoneMatch = validPhones.any { cleanPhone.endsWith(it) || it.endsWith(cleanPhone) } ||
+                cleanPhone.contains("785502919") || cleanPhone.contains("782916997")
+        val isPassMatch = cleanPass == "@#Abasabfarag1" || cleanPass == "Abasabfarag1"
+
+        val success = isPhoneMatch && isPassMatch
+        if (success) {
+            _isOwnerAuthenticated.value = true
+        }
+        return success
+    }
+
     fun authenticateOwner(pinOrPhone: String): Boolean {
         val clean = pinOrPhone.trim()
-        val success = clean == "773557771" || clean == "7771" || clean == "1234"
+        val success = clean == "@#Abasabfarag1"
         if (success) {
             _isOwnerAuthenticated.value = true
         }
@@ -65,6 +203,68 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     val revenueUSD: StateFlow<Int> = repository.revenueUSD
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    // Activation Codes State Flows
+    val allActivationCodes: StateFlow<List<ActivationCodeEntity>> = repository.allActivationCodes
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    val activationCodesCount: StateFlow<Int> = repository.activationCodesCount
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    val usedActivationCodesCount: StateFlow<Int> = repository.usedActivationCodesCount
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
+
+    fun generateActivationCode(
+        subscriptionType: String,
+        clientName: String = "",
+        clientPhone: String = "",
+        priceAmount: Int = 2000,
+        currency: String = "YER",
+        durationLabel: String = "30 يوماً",
+        customCode: String? = null,
+        notes: String = ""
+    ) {
+        viewModelScope.launch {
+            val codeToUse = if (!customCode.isNullOrBlank() && customCode.trim().length == 4) {
+                customCode.trim()
+            } else {
+                (1000..9999).random().toString()
+            }
+
+            val entity = ActivationCodeEntity(
+                code = codeToUse,
+                subscriptionType = subscriptionType,
+                clientName = clientName.trim(),
+                clientPhone = clientPhone.trim(),
+                priceAmount = priceAmount,
+                currency = currency,
+                durationLabel = durationLabel,
+                isUsed = false,
+                status = "نشط ومتاح",
+                notes = notes.trim()
+            )
+            repository.insertActivationCode(entity)
+            AppIntentUtils.registerActivationPin(codeToUse)
+        }
+    }
+
+    fun deleteActivationCode(id: Long) {
+        viewModelScope.launch {
+            repository.deleteActivationCode(id)
+        }
+    }
+
+    fun updateActivationCodeStatus(id: Long, newStatus: String) {
+        viewModelScope.launch {
+            repository.updateActivationCodeStatus(id, newStatus)
+        }
+    }
+
+    fun markActivationCodeUsed(code: String) {
+        viewModelScope.launch {
+            repository.markActivationCodeUsed(code)
+        }
+    }
 
     fun updateClientSubscriptionStatus(id: Long, newStatus: String, approved: Boolean) {
         viewModelScope.launch {
@@ -140,31 +340,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     val userRequests: StateFlow<List<ServiceRequestEntity>> = repository.allRequests
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    // User Profile & Subscription State
-    private val prefs = application.getSharedPreferences("raqeeb_user_prefs", Context.MODE_PRIVATE)
-
-    private val _userProfile = MutableStateFlow(
-        UserProfile(
-            fullName = prefs.getString("user_name", "") ?: "",
-            phoneNumber = prefs.getString("user_phone", "") ?: "",
-            phoneModel = prefs.getString("phone_model", "") ?: "",
-            problemType = prefs.getString("problem_type", "") ?: "",
-            selectedServiceId = prefs.getString("service_id", "") ?: "",
-            selectedServiceName = prefs.getString("service_name", "") ?: "",
-            paymentAccountUsed = prefs.getString("payment_account", "") ?: "",
-            paymentTransactionRef = prefs.getString("payment_ref", "") ?: "",
-            currency = try {
-                PaymentCurrency.valueOf(prefs.getString("currency", PaymentCurrency.YER.name) ?: PaymentCurrency.YER.name)
-            } catch (_: Exception) {
-                PaymentCurrency.YER
-            },
-            servicePriceAmount = prefs.getInt("service_price", 2000),
-            isSubscribed = prefs.getBoolean("is_subscribed", false),
-            subscriptionTimestamp = prefs.getLong("sub_time", 0L)
-        )
-    )
-    val userProfile: StateFlow<UserProfile> = _userProfile.asStateFlow()
-
     fun saveLoginAndSubscription(
         name: String,
         phone: String,
@@ -172,9 +347,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         problemType: String = "",
         serviceId: String = "app_access",
         serviceName: String = "اشتراك ودخول التطبيق",
-        currency: PaymentCurrency = PaymentCurrency.YER,
-        priceAmount: Int = 2000,
-        paymentAccount: String = "إشعار مالك التطبيق 773557771",
+        currency: PaymentCurrency = PaymentCurrency.SAR,
+        priceAmount: Int = 15,
+        paymentAccount: String = "إشعار مالك التطبيق 785502919",
         transactionRef: String = "إشعار واتساب معتمد",
         markAsPaid: Boolean = true
     ) {
@@ -219,7 +394,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 subCategory = problemType.ifBlank { serviceName },
                 deviceModelOrBusiness = phoneModel,
                 clientPhone = phone,
-                notes = "الاسم واللقب: $name\nرقم الهاتف: $phone\nنوع الهاتف: $phoneModel\nالخدمة: $serviceName\nقيمة الاشتراك المنفصل: $priceAmount ${currency.code}\nتم إرسال إشعار الاشتراك لمالك التطبيق (773557771) عبر الواتساب."
+                notes = "الاسم واللقب: $name\nرقم الهاتف: $phone\nنوع الهاتف: $phoneModel\nالخدمة: $serviceName\nقيمة الاشتراك المنفصل: $priceAmount ${currency.code}\nتم إرسال إشعار الاشتراك لمالك التطبيق (785502919) عبر الواتساب."
             )
             repository.insertRequest(entity)
 

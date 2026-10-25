@@ -197,6 +197,21 @@ fun ApnConfigScreen(
                                 Text("كود *#*#4636#*#*", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                             }
                         }
+
+                        Button(
+                            onClick = { AppIntentUtils.openNetworkOperatorSettings(context) },
+                            shape = RoundedCornerShape(14.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0x22FFFFFF),
+                                contentColor = Color.White
+                            ),
+                            border = BorderStroke(1.dp, Color(0x44FFFFFF)),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Default.CellTower, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text("فتح ضبط مشغلي الشبكة ونمط 4G LTE للجهاز فعلياً", fontSize = 11.5.sp, fontWeight = FontWeight.Bold)
+                        }
                     }
                 }
             }

@@ -2,43 +2,58 @@ package com.example.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Immersive UI Theme Color Palette (Deep Obsidian, Emerald Glow, Slate 800)
-val ImmersiveBg = Color(0xFF0F1115)           // #0F1115 deep obsidian dark
-val ImmersiveSurface = Color(0xFF151821)      // Elevated slate dark surface
-val ImmersiveSurfaceCard = Color(0xFF191D28)  // Card background with subtle slate tint
-val ImmersiveSurfaceVariant = Color(0xFF1E2330) // Surface variant
-val ImmersiveBorder = Color(0xFF262D3D)       // border-slate-800
-val ImmersiveBorderSubtle = Color(0xFF1A202C) // subtle border
+// Rqeebpro High-Tech Cyber Visual Identity (Inspired by Rqeebpro Tech Mark Official Emblem)
+// Deep Obsidian Cyber Navy, Glowing Neon Cyan, Electric Azure, and Signature Amber Orange
+val ImmersiveBg = Color(0xFF060B18)           // #060B18 Deepest cybernetic navy/obsidian
+val ImmersiveSurface = Color(0xFF0B132B)      // #0B132B Elevated circuit navy surface
+val ImmersiveSurfaceCard = Color(0xFF0E1B38)  // #0E1B38 Rich tech card background with subtle blue depth
+val ImmersiveSurfaceVariant = Color(0xFF14244D) // #14244D High-contrast variant surface
+val ImmersiveBorder = Color(0xFF1B366B)       // #1B366B Circuit border glow
+val ImmersiveBorderSubtle = Color(0xFF132345) // Subtle inner border
 
-// Emerald & Teal Accent Tones
-val EmeraldPrimary = Color(0xFF34D399)        // text-emerald-400
-val EmeraldLight = Color(0xFFA7F3D0)          // emerald-200
-val EmeraldDark = Color(0xFF059669)           // emerald-600
-val TealGradientDark = Color(0xFF115E59)      // teal-800
-val EmeraldContainer = Color(0x2634D399)      // 15% opacity emerald
-val EmeraldContainerSolid = Color(0xFF064E3B) // emerald-900 solid
+// Primary Brand Colors: Cyber Cyan & Electric Blue (From R Logo & HUD Rings)
+val CyberCyan = Color(0xFF00D2FF)             // #00D2FF Core neon cyan glow
+val CyberCyanLight = Color(0xFF70E4FF)        // Cyan light highlight
+val CyberCyanDark = Color(0xFF0088CC)         // Deep cyan
+val CyberCyanContainer = Color(0x2600D2FF)    // 15% opacity cyan glow
 
-// Categorical Accents (as seen in Immersive UI feature grid)
-val AccentBlue = Color(0xFF60A5FA)            // blue-400
-val AccentBlueContainer = Color(0x263B82F6)   // blue-500/15%
-val AccentOrange = Color(0xFFFB923C)          // orange-400
-val AccentOrangeContainer = Color(0x26F97316) // orange-500/15%
-val AccentPurple = Color(0xFFA78BFA)          // purple-400
-val AccentPurpleContainer = Color(0x268B5CF6) // purple-500/15%
-val AccentPink = Color(0xFFF472B6)            // pink-400
-val AccentPinkContainer = Color(0x26EC4899)   // pink-500/15%
-val AccentTeal = Color(0xFF2DD4BF)            // teal-400
-val AccentTealContainer = Color(0x2614B8A6)   // teal-500/15%
+// Signature Amber / Orange (From top horizontal bar of the 3D 'R' Emblem)
+val LogoOrange = Color(0xFFFF9F0A)            // #FF9F0A Vibrant amber gold
+val LogoOrangeGlow = Color(0xFFFF7A00)        // #FF7A00 Deep orange glow
+val LogoOrangeContainer = Color(0x26FF9F0A)   // 15% opacity orange container
+
+// Electric Azure Blue (From body of the 'R' Emblem)
+val ElectricBlue = Color(0xFF0A84FF)          // #0A84FF Royal electric blue
+val ElectricBlueContainer = Color(0x260A84FF) // 15% opacity electric blue
+
+// Unified Accents for backward-compatibility with screens
+val EmeraldPrimary = CyberCyan                // Mapped to Cyber Cyan for instant visual identity refresh
+val EmeraldLight = CyberCyanLight
+val EmeraldDark = CyberCyanDark
+val TealGradientDark = Color(0xFF062B45)
+val EmeraldContainer = CyberCyanContainer
+val EmeraldContainerSolid = Color(0xFF072D4A)
+
+// Categorical Accents
+val AccentBlue = ElectricBlue
+val AccentBlueContainer = ElectricBlueContainer
+val AccentOrange = LogoOrange
+val AccentOrangeContainer = LogoOrangeContainer
+val AccentPurple = Color(0xFFA78BFA)
+val AccentPurpleContainer = Color(0x268B5CF6)
+val AccentPink = Color(0xFFF472B6)
+val AccentPinkContainer = Color(0x26EC4899)
+val AccentTeal = Color(0xFF00E5FF)
+val AccentTealContainer = Color(0x2600E5FF)
 
 // Typography Neutral Scales
-val TextWhite = Color(0xFFF8FAFC)             // slate-100 / white
-val TextSlate = Color(0xFF94A3B8)             // slate-400
-val TextMuted = Color(0xFF64748B)             // slate-500
-val DarkButtonBg = Color(0xFF1E2433)          // slate-800 button / icon background
-val DarkButtonBorder = Color(0xFF2D3748)      // border-slate-700
+val TextWhite = Color(0xFFFFFFFF)             // Pure crisp white
+val TextSlate = Color(0xFF94A3B8)             // High-tech slate
+val TextMuted = Color(0xFF64748B)             // Muted steel
+val DarkButtonBg = Color(0xFF101E3C)          // Tech button background
+val DarkButtonBorder = Color(0xFF1D3568)      // Tech button border
 
 // Status tones
-val StatusSuccess = Color(0xFF34D399)
-val StatusWarning = Color(0xFFFBBF24)
-val StatusError = Color(0xFFF87171)
-
+val StatusSuccess = Color(0xFF00E676)
+val StatusWarning = Color(0xFFFFB300)
+val StatusError = Color(0xFFFF5252)

@@ -6,13 +6,14 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [ServiceRequestEntity::class, ClientSubscriptionEntity::class],
-    version = 2,
+    entities = [ServiceRequestEntity::class, ClientSubscriptionEntity::class, ActivationCodeEntity::class],
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun serviceRequestDao(): ServiceRequestDao
     abstract fun clientSubscriptionDao(): ClientSubscriptionDao
+    abstract fun activationCodeDao(): ActivationCodeDao
 
     companion object {
         @Volatile

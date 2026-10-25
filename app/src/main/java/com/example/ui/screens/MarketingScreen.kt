@@ -1,6 +1,7 @@
 package com.example.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -54,29 +55,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.R
 import com.example.model.MarketingPackage
 import com.example.ui.dialogs.RequestServiceDialog
-import com.example.ui.theme.AccentOrange
-import com.example.ui.theme.AccentTeal
-import com.example.ui.theme.DarkButtonBg
-import com.example.ui.theme.DarkButtonBorder
-import com.example.ui.theme.EmeraldContainer
-import com.example.ui.theme.EmeraldDark
-import com.example.ui.theme.EmeraldLight
-import com.example.ui.theme.EmeraldPrimary
-import com.example.ui.theme.ImmersiveBg
-import com.example.ui.theme.ImmersiveBorder
-import com.example.ui.theme.ImmersiveBorderSubtle
-import com.example.ui.theme.ImmersiveSurfaceCard
-import com.example.ui.theme.ImmersiveSurfaceVariant
-import com.example.ui.theme.TealGradientDark
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextSlate
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.*
 import com.example.util.AppIntentUtils
 import kotlin.math.roundToInt
 
@@ -98,25 +86,38 @@ fun MarketingScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(top = 12.dp, bottom = 32.dp)
     ) {
-        // Marketing Hero Header with Immersive Emerald-Teal Gradient
+        // Marketing Hero Header with Immersive Cyber Banner
         item {
             Card(
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                border = BorderStroke(1.dp, Color(0x3334D399)),
+                colors = CardDefaults.cardColors(containerColor = ImmersiveSurfaceCard),
+                border = BorderStroke(1.dp, CyberCyan.copy(alpha = 0.35f)),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.linearGradient(
-                                colors = listOf(EmeraldDark, TealGradientDark)
-                            )
-                        )
-                        .padding(20.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.rqeebpro_banner_1791221166842),
+                        contentDescription = "بانر رقيب برو للتسويق",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.matchParentSize()
+                    )
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color(0xD9060B18),
+                                        Color(0xF2060B18),
+                                        Color(0xFA0B132B)
+                                    )
+                                )
+                            )
+                    )
                     Column(
+                        modifier = Modifier.padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Row(

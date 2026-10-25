@@ -90,7 +90,10 @@ data class ApnProfile(
     val username: String = "",
     val password: String = "",
     val mmsc: String = "",
-    val instructions: String
+    val instructions: String,
+    val unlockCode: String = "*#*#4636#*#*",
+    val unlockInstructions: String = "ادخل كود فحص وقفل الشبكة NCK/SIM Lock أو اضبط وضع الشبكة الهندسية",
+    val mccMnc: String = ""
 )
 
 data class ScannedMediaItem(

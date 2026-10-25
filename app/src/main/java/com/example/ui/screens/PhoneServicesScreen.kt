@@ -76,32 +76,7 @@ import com.example.ui.dialogs.ArabizationToolDialog
 import com.example.ui.dialogs.CarrierUnlockToolDialog
 import com.example.ui.dialogs.PhoneDetailDialog
 import com.example.ui.dialogs.RequestServiceDialog
-import com.example.ui.theme.AccentBlue
-import com.example.ui.theme.AccentBlueContainer
-import com.example.ui.theme.AccentOrange
-import com.example.ui.theme.AccentOrangeContainer
-import com.example.ui.theme.AccentPink
-import com.example.ui.theme.AccentPinkContainer
-import com.example.ui.theme.AccentPurple
-import com.example.ui.theme.AccentPurpleContainer
-import com.example.ui.theme.AccentTeal
-import com.example.ui.theme.AccentTealContainer
-import com.example.ui.theme.DarkButtonBg
-import com.example.ui.theme.DarkButtonBorder
-import com.example.ui.theme.EmeraldContainer
-import com.example.ui.theme.EmeraldDark
-import com.example.ui.theme.EmeraldLight
-import com.example.ui.theme.EmeraldPrimary
-import com.example.ui.theme.ImmersiveBg
-import com.example.ui.theme.ImmersiveBorder
-import com.example.ui.theme.ImmersiveBorderSubtle
-import com.example.ui.theme.ImmersiveSurface
-import com.example.ui.theme.ImmersiveSurfaceCard
-import com.example.ui.theme.ImmersiveSurfaceVariant
-import com.example.ui.theme.TealGradientDark
-import com.example.ui.theme.TextMuted
-import com.example.ui.theme.TextSlate
-import com.example.ui.theme.TextWhite
+import com.example.ui.theme.*
 import com.example.util.AppIntentUtils
 
 @Composable
@@ -131,25 +106,38 @@ fun PhoneServicesScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         contentPadding = PaddingValues(top = 12.dp, bottom = 32.dp)
     ) {
-        // Hero Card with Immersive Emerald-Teal Gradient and System Status
+        // Hero Card with Immersive Cyber-Gradient and Official Banner
         item {
             Card(
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent),
-                border = BorderStroke(1.dp, Color(0x3334D399)),
+                colors = CardDefaults.cardColors(containerColor = ImmersiveSurfaceCard),
+                border = BorderStroke(1.dp, CyberCyan.copy(alpha = 0.35f)),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(
-                            Brush.linearGradient(
-                                colors = listOf(EmeraldDark, TealGradientDark)
-                            )
-                        )
-                        .padding(20.dp)
+                    modifier = Modifier.fillMaxWidth()
                 ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.rqeebpro_banner_1791221166842),
+                        contentDescription = "بانر رقيب برو",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.matchParentSize()
+                    )
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color(0xD9060B18),
+                                        Color(0xF2060B18),
+                                        Color(0xFA0B132B)
+                                    )
+                                )
+                            )
+                    )
                     Column(
+                        modifier = Modifier.padding(20.dp),
                         verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Row(
@@ -288,15 +276,15 @@ fun PhoneServicesScreen(
                         }
                         Text(
                             text = "محاكي القفل",
-                            fontSize = 13.sp,
+                            fontSize = 13.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextWhite
                         )
                         Text(
                             text = "تذكير الرمز بإثبات الملكية",
-                            fontSize = 10.sp,
+                            fontSize = 11.5.sp,
                             color = AccentOrange,
-                            lineHeight = 14.sp
+                            lineHeight = 16.sp
                         )
                     }
                 }
@@ -329,15 +317,15 @@ fun PhoneServicesScreen(
                         }
                         Text(
                             text = "استرداد البيانات",
-                            fontSize = 13.sp,
+                            fontSize = 13.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextWhite
                         )
                         Text(
                             text = "فحص الصور والملفات",
-                            fontSize = 10.sp,
+                            fontSize = 11.5.sp,
                             color = TextSlate,
-                            lineHeight = 14.sp
+                            lineHeight = 16.sp
                         )
                     }
                 }
@@ -370,99 +358,16 @@ fun PhoneServicesScreen(
                         }
                         Text(
                             text = "تفعيل 4G",
-                            fontSize = 13.sp,
+                            fontSize = 13.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = TextWhite
                         )
                         Text(
                             text = "نقاط وصول الشبكات",
-                            fontSize = 10.sp,
+                            fontSize = 11.5.sp,
                             color = TextSlate,
-                            lineHeight = 14.sp
+                            lineHeight = 16.sp
                         )
-                    }
-                }
-            }
-        }
-
-        // Dedicated Banner for Login & Subscription
-        item {
-            Card(
-                onClick = { onNavigateSection(ServiceSection.LOGIN_SUBSCRIPTION) },
-                shape = RoundedCornerShape(20.dp),
-                colors = CardDefaults.cardColors(containerColor = ImmersiveSurfaceCard),
-                border = BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.5f)),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .clip(CircleShape)
-                                .background(EmeraldContainer),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                Icons.Default.AccountCircle,
-                                contentDescription = null,
-                                tint = EmeraldPrimary,
-                                modifier = Modifier.size(26.dp)
-                            )
-                        }
-                        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(6.dp)
-                            ) {
-                                Text(
-                                    text = "تسجيل الدخول والاشتراك بالخدمات",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = TextWhite
-                                )
-                                Surface(
-                                    shape = RoundedCornerShape(6.dp),
-                                    color = EmeraldPrimary.copy(alpha = 0.2f)
-                                ) {
-                                    Text(
-                                        text = "2000 ر.ي",
-                                        fontSize = 11.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = EmeraldPrimary,
-                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                                    )
-                                }
-                            }
-                            Text(
-                                text = "سجل بياناتك ونوع هاتفك وادفع عبر الكريمي، جيب، ون كاش، أو جوالي لتفعيل فوري",
-                                fontSize = 11.sp,
-                                color = TextSlate,
-                                lineHeight = 16.sp
-                            )
-                        }
-                    }
-
-                    Button(
-                        onClick = { onNavigateSection(ServiceSection.LOGIN_SUBSCRIPTION) },
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = EmeraldPrimary,
-                            contentColor = ImmersiveBg
-                        ),
-                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 8.dp)
-                    ) {
-                        Text("اشتراك", fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
@@ -677,45 +582,6 @@ fun PhoneServiceCard(
                 color = TextSlate,
                 lineHeight = 20.sp
             )
-
-            // Individual Service Pricing Badge (YER / SAR / USD)
-            service.pricing?.let { pricing ->
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = ImmersiveSurfaceVariant,
-                    border = BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.35f)),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Text(
-                                text = "قيمة الاشتراك المنفصل:",
-                                fontSize = 11.sp,
-                                color = TextSlate
-                            )
-                            Text(
-                                text = "${pricing.yer} YER",
-                                fontSize = 13.sp,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = EmeraldPrimary
-                            )
-                        }
-                        Text(
-                            text = "(${pricing.sar} SAR / ${pricing.usd} USD)",
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = AccentTeal
-                        )
-                    }
-                }
-            }
 
             // Step summary teaser
             Column(

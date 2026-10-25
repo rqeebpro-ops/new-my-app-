@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Raqeeb"
+rootProject.name = "rqeebpro.tech"
 
 include(":app")

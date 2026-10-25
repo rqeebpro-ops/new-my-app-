@@ -3,450 +3,383 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تحميل تطبيق رقيب للبرمجة والتسويق الرقمي | تنزيل أندرويد APK</title>
-  <meta name="description" content="حمّل تطبيق رقيب للبرمجة والتسويق الرقمي لهواتف أندرويد. حلول متكاملة لفك الرمز، استعادة البيانات، تعريب الأجهزة، تفعيل 3G/4G، والتسويق الإلكتروني.">
-  <link rel="icon" href="icon.jpg" type="image/jpeg">
+  <title>تحميل تطبيق رقيب برو | rqeebpro.tech APK</title>
+  <meta name="description" content="حمّل تطبيق رقيب برو للبرمجة والتسويق (rqeebpro.tech) لهواتف أندرويد. فك الشفرات، استعادة البيانات، تفعيل 3G/4G، فك الأقفال، وخدمات التسويق الرقمي.">
+  <link rel="icon" href="logo.jpg" type="image/jpeg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0A0F1D;
-      --surface-dark: #121A2F;
-      --surface-card: #18223C;
-      --surface-border: #233154;
+      --bg: #070B14;
+      --card-bg: #0E1626;
+      --card-border: #1E2D4A;
       --emerald: #10B981;
+      --emerald-glow: rgba(16, 185, 129, 0.4);
       --emerald-light: #34D399;
-      --emerald-glow: rgba(16, 185, 129, 0.25);
-      --teal: #14B8A6;
-      --orange: #F97316;
-      --text-white: #FFFFFF;
+      --cyan: #06B6D4;
+      --text-white: #F8FAFC;
       --text-slate: #94A3B8;
-      --text-muted: #64748B;
+      --text-dim: #64748B;
+      --accent-orange: #F59E0B;
     }
-
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Cairo', sans-serif;
+      font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
-
     body {
-      background-color: var(--bg-dark);
+      background-color: var(--bg);
       color: var(--text-white);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 60px;
       line-height: 1.6;
-      overflow-x: hidden;
+    }
+    .container {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    /* Banner Card */
+    .banner-wrapper {
+      width: 100%;
+      height: 140px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      position: relative;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.5);
+    }
+    .banner-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(7,11,20,0.2) 0%, rgba(7,11,20,0.85) 100%);
     }
 
-    /* Ambient lighting */
-    .glow-top {
+    /* Main Download Card */
+    .header-card {
+      background: linear-gradient(145deg, #0f1b30, #0a101f);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 28px 22px;
+      text-align: center;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.4);
+      position: relative;
+      overflow: hidden;
+    }
+    .header-card::before {
+      content: '';
       position: absolute;
-      top: 0;
+      top: -60px;
       left: 50%;
       transform: translateX(-50%);
-      width: 600px;
-      height: 350px;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(20, 184, 166, 0.08) 45%, transparent 70%);
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, var(--emerald-glow) 0%, transparent 70%);
       pointer-events: none;
-      z-index: 0;
     }
-
-    .container {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 24px 20px;
-      position: relative;
-      z-index: 1;
-      width: 100%;
-    }
-
-    /* Header */
-    header {
-      text-align: center;
-      padding: 30px 0 10px;
-    }
-
-    .logo-wrapper {
-      position: relative;
-      display: inline-block;
-      margin-bottom: 16px;
-    }
-
     .logo-img {
       width: 90px;
       height: 90px;
       border-radius: 24px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 25px var(--emerald-glow);
       border: 2px solid var(--emerald);
+      box-shadow: 0 10px 28px var(--emerald-glow);
+      margin: 0 auto 16px;
+      display: block;
       object-fit: cover;
     }
-
-    .app-title {
-      font-size: 28px;
-      font-weight: 900;
-      color: var(--text-white);
-      margin-bottom: 4px;
-    }
-
-    .app-title span {
-      color: var(--emerald-light);
-    }
-
-    .app-subtitle {
-      font-size: 14px;
-      color: var(--text-slate);
-      font-weight: 600;
-      margin-bottom: 24px;
-    }
-
-    /* Main Download Card */
-    .download-card {
-      background: linear-gradient(180deg, var(--surface-card) 0%, var(--surface-dark) 100%);
-      border: 1px solid var(--surface-border);
-      border-radius: 24px;
-      padding: 28px 22px;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-      margin-bottom: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .badge-direct {
+    .badge-tag {
       display: inline-block;
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid var(--emerald);
       color: var(--emerald-light);
-      font-size: 12px;
-      font-weight: 700;
-      padding: 5px 14px;
+      padding: 5px 16px;
       border-radius: 50px;
-      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--text-white);
+      margin-bottom: 6px;
+    }
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-slate);
+      margin-bottom: 22px;
+      line-height: 1.7;
     }
 
+    /* Download Button & Animation */
+    @keyframes pulse-glow {
+      0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+      }
+      70% {
+        box-shadow: 0 0 0 16px rgba(16, 185, 129, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
+    }
     .download-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
-      color: #0A0F1D;
-      text-decoration: none;
-      font-size: 18px;
-      font-weight: 800;
-      padding: 16px 28px;
-      border-radius: 18px;
-      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
-      transition: all 0.25s ease;
-      margin: 10px auto 14px;
+      gap: 14px;
       width: 100%;
-      max-width: 440px;
+      padding: 18px 24px;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: #03140C;
+      text-decoration: none;
+      font-weight: 900;
+      font-size: 18px;
+      border-radius: 20px;
+      box-shadow: 0 10px 28px var(--emerald-glow);
+      transition: all 0.25s ease;
+      border: none;
+      cursor: pointer;
+      animation: pulse-glow 2.5s infinite;
     }
-
     .download-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 14px 30px rgba(16, 185, 129, 0.5);
+      box-shadow: 0 14px 34px rgba(16, 185, 129, 0.6);
       background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
     }
-
-    .download-btn svg {
-      width: 26px;
-      height: 26px;
+    .download-btn:active {
+      transform: translateY(1px);
+    }
+    .download-icon {
+      width: 28px;
+      height: 28px;
       fill: currentColor;
     }
-
-    .meta-info {
-      display: flex;
-      justify-content: center;
-      gap: 18px;
-      font-size: 12px;
-      color: var(--text-slate);
-      margin-top: 10px;
-      flex-wrap: wrap;
+    .mirror-btn {
+      display: inline-block;
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--cyan);
+      text-decoration: underline;
+      cursor: pointer;
     }
 
+    .meta-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 16px;
+      font-size: 12.5px;
+      color: var(--text-slate);
+      flex-wrap: wrap;
+    }
     .meta-item {
       display: flex;
       align-items: center;
       gap: 5px;
     }
-
-    .meta-item span {
+    .meta-item b {
       color: var(--text-white);
-      font-weight: 700;
     }
 
-    /* Instructions / Steps */
-    .section-title {
-      font-size: 17px;
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 22px;
+      padding: 22px 20px;
+    }
+    .card-title {
+      font-size: 16px;
       font-weight: 800;
-      margin: 24px 0 14px;
+      color: var(--emerald-light);
+      margin-bottom: 14px;
       display: flex;
       align-items: center;
       gap: 8px;
-      color: var(--emerald-light);
     }
-
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    @media (max-width: 600px) {
-      .steps-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .step-box {
-      background: var(--surface-card);
-      border: 1px solid var(--surface-border);
-      border-radius: 16px;
-      padding: 16px 14px;
-      text-align: center;
-    }
-
-    .step-number {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      background: rgba(16, 185, 129, 0.15);
-      color: var(--emerald-light);
-      font-weight: 800;
-      font-size: 14px;
+    .steps-list {
+      list-style: none;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 10px;
-      border: 1px solid var(--emerald);
+      flex-direction: column;
+      gap: 12px;
     }
-
-    .step-text {
-      font-size: 13px;
-      color: var(--text-slate);
-      line-height: 1.5;
-    }
-
-    .step-text strong {
-      color: var(--text-white);
-      display: block;
-      margin-bottom: 3px;
-    }
-
-    /* Features Card */
-    .feature-card {
-      background: var(--surface-card);
-      border: 1px solid var(--surface-border);
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 12px;
+    .step-item {
       display: flex;
       align-items: flex-start;
-      gap: 14px;
+      gap: 12px;
+      font-size: 13.5px;
+      color: var(--text-slate);
     }
-
-    .feature-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: rgba(20, 184, 166, 0.15);
-      color: var(--teal);
+    .step-num {
+      width: 28px;
+      height: 28px;
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-      font-size: 20px;
-      border: 1px solid rgba(20, 184, 166, 0.3);
-    }
-
-    .feature-details h4 {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text-white);
-      margin-bottom: 3px;
-    }
-
-    .feature-details p {
-      font-size: 12px;
-      color: var(--text-slate);
-    }
-
-    /* Owner & WhatsApp Support */
-    .support-card {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
-      border: 1px solid var(--emerald);
-      border-radius: 20px;
-      padding: 22px;
-      text-align: center;
-      margin-top: 24px;
-    }
-
-    .support-card h3 {
-      font-size: 16px;
-      color: var(--text-white);
       font-weight: 800;
-      margin-bottom: 6px;
+      font-size: 12px;
+      flex-shrink: 0;
+      margin-top: 2px;
     }
 
-    .support-card p {
-      font-size: 13px;
-      color: var(--text-slate);
-      margin-bottom: 16px;
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .feature-chip {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 12.5px;
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .feature-chip span {
+      font-size: 18px;
     }
 
-    .whatsapp-btn {
-      display: inline-flex;
+    .support-btn {
+      display: flex;
       align-items: center;
       justify-content: center;
       gap: 10px;
+      width: 100%;
+      padding: 15px 20px;
       background: #25D366;
-      color: #FFFFFF;
+      color: #03200E;
       text-decoration: none;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 15px;
-      padding: 12px 24px;
-      border-radius: 14px;
-      box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(37, 211, 102, 0.3);
       transition: all 0.2s ease;
     }
-
-    .whatsapp-btn:hover {
-      background: #20BA5A;
-      transform: translateY(-2px);
+    .support-btn:hover {
+      background: #1EBE5D;
     }
-
     footer {
       text-align: center;
-      padding: 30px 10px;
       font-size: 12px;
-      color: var(--text-muted);
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      margin-top: 30px;
+      color: var(--text-dim);
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="glow-top"></div>
-
   <div class="container">
-    <!-- Header -->
-    <header>
-      <div class="logo-wrapper">
-        <img src="icon.jpg" alt="شعار تطبيق رقيب" class="logo-img">
-      </div>
-      <h1 class="app-title">مركز <span>رقيب</span> للبرمجة والتسويق</h1>
-      <p class="app-subtitle">تطبيق أندرويد المتكامل لحلول الهواتف الذكية وخدمات التسويق الرقمي</p>
-    </header>
+    <!-- Official Banner -->
+    <div class="banner-wrapper">
+      <img src="banner.jpg" alt="بانر رقيب برو الرسمي" class="banner-img">
+      <div class="banner-overlay"></div>
+    </div>
 
-    <!-- Main Download Section -->
-    <div class="download-card">
-      <span class="badge-direct">نسخة أندرويد الأصلية المباشرة (APK)</span>
-      <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 8px;">تنزيل التطبيق على هاتفك</h2>
-      <p style="font-size: 13px; color: var(--text-slate); margin-bottom: 18px;">
-        اضغط على الزر أدناه لتنزيل ملف التثبيت المباشر على هاتفك المحمول بصيغة APK.
-      </p>
+    <!-- Main Download Card -->
+    <div class="header-card">
+      <img src="logo.jpg" alt="شعار رقيب برو" class="logo-img">
+      <div class="badge-tag">تحديث جديد • إصدار v3.1.0</div>
+      <h1>تطبيق رقيب برو للتقنية</h1>
+      <p class="subtitle">المنصة الشاملة لبرمجة الهواتف الذكية، فك الشفرات والإقفال، استرجاع البيانات، تفعيل 3G/4G، وخدمات التسويق الرقمي.</p>
 
-      <a href="raqeeb-app.apk" download="raqeeb-app.apk" class="download-btn">
-        <svg viewBox="0 0 24 24">
+      <!-- Primary Download Button with Icon -->
+      <a href="rqeebpro.tech.apk" download="rqeebpro.tech.apk" class="download-btn" id="downloadBtn">
+        <svg class="download-icon" viewBox="0 0 24 24">
           <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"/>
         </svg>
-        تحميل التطبيق الآن (APK مباشر)
+        <span>تحميل تطبيق رقيب برو (APK مباشر)</span>
       </a>
 
-      <div class="meta-info">
-        <div class="meta-item">حجم الملف: <span>24 ميجابايت</span></div>
+      <div>
+        <a href="app-debug.apk" download="rqeebpro.tech.apk" class="mirror-btn">رابط تحميل احتياطي (Mirror Download)</a>
+      </div>
+
+      <div class="meta-row">
+        <div class="meta-item">📁 الحجم: <b>27 ميجابايت</b></div>
         <div class="meta-item">•</div>
-        <div class="meta-item">نظام التشغيل: <span>Android 8.0 فما فوق</span></div>
+        <div class="meta-item">📱 النظام: <b>Android 7.0 - 15+</b></div>
         <div class="meta-item">•</div>
-        <div class="meta-item">الإصدار: <span>v1.0.0 أحدث إصدار</span></div>
+        <div class="meta-item">🔒 الحزمة: <b>com.aistudio.raqeeb.app</b></div>
       </div>
     </div>
 
-    <!-- Quick How-To Steps -->
-    <div class="section-title">
-      <span>⚙️</span>
-      خطوات التثبيت السريعة على هاتف أندرويد
+    <!-- Installation Steps -->
+    <div class="card">
+      <div class="card-title">
+        <span>📲</span>
+        <span>طريقة تثبيت التطبيق على هاتفك المحمول:</span>
+      </div>
+      <ul class="steps-list">
+        <li class="step-item">
+          <div class="step-num">1</div>
+          <div>اضغط على زر <b>تحميل تطبيق رقيب برو (APK)</b> الأخضر في الأعلى لبدء تنزيل ملف <code>rqeebpro.tech.apk</code> مباشرة.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">2</div>
+          <div>بعد اكتمال التنزيل، اضغط على إشعار التنزيل أو افتح مجلد <b>التنزيلات (Downloads)</b> واضغط على الملف.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">3</div>
+          <div>إذا ظهر لك تنبيه الأمان <i>"حظر تثبيت التطبيقات من مصادر غير معروفة"</i>، اضغط على <b>الضبط (Settings)</b> ثم فعّل <b>السماح بالتثبيت من هذا المصدر (Allow from this source)</b>.</div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">4</div>
+          <div>اضغط على <b>تثبيت (Install)</b> ثم <b>فتح (Open)</b> واستمتع بجميع خدمات التطبيق فوراً!</div>
+        </li>
+      </ul>
     </div>
 
-    <div class="steps-grid">
-      <div class="step-box">
-        <div class="step-number">1</div>
-        <div class="step-text">
-          <strong>اضغط تحميل</strong>
-          حمّل ملف raqeeb-app.apk من الزر أعلاه على هاتفك.
-        </div>
+    <!-- Key Services -->
+    <div class="card">
+      <div class="card-title">
+        <span>⚡</span>
+        <span>أبرز الخدمات المتاحة داخل التطبيق:</span>
       </div>
-      <div class="step-box">
-        <div class="step-number">2</div>
-        <div class="step-text">
-          <strong>السماح بالتثبيت</strong>
-          عند ظهور رسالة المصادر غير المعروفة اضغط على (السماح / Install).
-        </div>
-      </div>
-      <div class="step-box">
-        <div class="step-number">3</div>
-        <div class="step-text">
-          <strong>تسجيل الدخول والاشتراك</strong>
-          أدخل اسمك ورقمك ونوع مشكلتك وأرسل الإشعار للرقم 773557771 لدخول التطبيق.
-        </div>
-      </div>
-    </div>
-
-    <!-- App Highlights -->
-    <div class="section-title">
-      <span>🛠️</span>
-      أبرز خدمات تطبيق رقيب للبرمجة
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">🔓</div>
-      <div class="feature-details">
-        <h4>حلول رمز القفل وفك الشفرات وحسابات FRP</h4>
-        <p>إرشادات ومحاكاة عملية لتجاوز رمز الشاشة المفقود، وتخطي حسابات جوجل معتمدة لمختلف أنواع الهواتف.</p>
+      <div class="features-grid">
+        <div class="feature-chip"><span>🔓</span> فك شفرات الشبكة وتفعيل 4G</div>
+        <div class="feature-chip"><span>🔑</span> محاكي فك القفل وحساب FRP</div>
+        <div class="feature-chip"><span>💾</span> فاحص استرداد الصور والملفات</div>
+        <div class="feature-chip"><span>🌐</span> تعريب وضبط كافة الهواتف</div>
+        <div class="feature-chip"><span>📈</span> خدمات وباقات التسويق الرقمي</div>
+        <div class="feature-chip"><span>⚙️</span> فحص شبكي بكود *#*#4636#*#*</div>
       </div>
     </div>
 
-    <div class="feature-card">
-      <div class="feature-icon">📡</div>
-      <div class="feature-details">
-        <h4>تفعيل وضبط بيانات 3G / 4G لكافة الشبكات</h4>
-        <p>إعدادات وتوليد ملفات نقاط الوصول APN لشبكات يمن موبايل، سبأفون، يو، وواي بضغطة زر واحدة.</p>
+    <!-- Direct Support -->
+    <div class="card">
+      <div class="card-title">
+        <span>💬</span>
+        <span>هل تحتاج إلى مساعدة أو تفعيل اشتراكك؟</span>
       </div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">💾</div>
-      <div class="feature-details">
-        <h4>استرجاع الصور والملفات المحذوفة</h4>
-        <p>فاحص متطور لفحص الذاكرة الداخلية واسترداد الصور والوسائط المحذوفة ورفع تقارير للمختبر.</p>
-      </div>
-    </div>
-
-    <div class="feature-card">
-      <div class="feature-icon">🚀</div>
-      <div class="feature-details">
-        <h4>خدمات التسويق الرقمي وإدارة الحملات</h4>
-        <p>باقات ترويجية وإعلانات ممولة على فيسبوك وإنستغرام وتيك توك لتكبير نشاطك التجاري.</p>
-      </div>
-    </div>
-
-    <!-- Owner Support & WhatsApp -->
-    <div class="support-card">
-      <h3>تواصل مباشر مع مالك التطبيق</h3>
-      <p>للمساعدة في التثبيت، سداد رسوم الاشتراك (2000 ريال يمني / حساب الكريمي 3001845477)، أو طلب خدمة فورية:</p>
-      <a href="https://wa.me/967773557771?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D9%85%D8%B1%D9%83%D8%B2%20%D8%B1%D9%82%D9%8A%D8%A8%D8%8C%20%D9%82%D9%85%D8%AA%20%D8%A8%D8%AA%D8%AD%D9%85%D9%8A%D9%84%20%D8%A7%D9%84%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D9%88%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83." target="_blank" class="whatsapp-btn">
-        💬 مراسلة مالك التطبيق عبر واتساب (773557771)
+      <p style="font-size: 13px; color: var(--text-slate); margin-bottom: 14px;">تواصل مباشرة مع إدارة ودعم مركز رقيب عبر الواتساب لتفعيل الخدمة واستلام أكواد التفعيل.</p>
+      <a href="https://wa.me/967785502919?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%20%D9%85%D8%B1%D9%83%D8%B2%20%D8%B1%D9%82%D9%8A%D8%A8%D8%8C%20%D9%82%D9%85%D8%AA%20%D8%A8%D8%AA%D8%AD%D9%85%D9%8A%D9%84%20%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20rqeebpro.tech%20%D9%88%D8%A3%D8%B1%D9%8A%D8%AF%20%D8%AA%D9%81%D8%B9%D9%8A%D9%84%20%D8%A7%D9%84%D8%AE%D8%AF%D9%85%D8%A9." target="_blank" class="support-btn">
+        <span>💬</span>
+        <span>مراسلة الدعم الفني عبر واتساب (785502919)</span>
       </a>
     </div>
 
     <footer>
-      جميع الحقوق محفوظة © مركز رقيب للبرمجة والتسويق الرقمي 2026 | رقم التواصل: 773557771
+      جميع الحقوق محفوظة © مركز رقيب للبرمجة والتسويق • rqeebpro.tech 2026
     </footer>
   </div>
 </body>
