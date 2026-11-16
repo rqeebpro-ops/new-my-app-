@@ -43,12 +43,20 @@ import com.example.ui.theme.TextSlate
 import com.example.ui.theme.TextWhite
 import com.example.util.AppIntentUtils
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import android.widget.Toast
+import androidx.compose.ui.input.pointer.pointerInput
+import com.example.ui.theme.EmeraldContainer
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +67,10 @@ fun RaqeebTopBar(
     onOpenOwnerDatabaseSecret: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
-    var logoTapCount by remember { mutableIntStateOf(0) }
+    val coroutineScope = rememberCoroutineScope()
+    var pressJob by remember { mutableStateOf<Job?>(null) }
+    var holdSeconds by remember { mutableStateOf(0) }
+    var isHolding by remember { mutableStateOf(false) }
 
     TopAppBar(
         title = {
@@ -71,15 +82,38 @@ fun RaqeebTopBar(
                     modifier = Modifier
                         .size(44.dp)
                         .clip(RoundedCornerShape(14.dp))
-                        .background(DarkButtonBg)
-                        .border(1.2.dp, EmeraldPrimary.copy(alpha = 0.7f), RoundedCornerShape(14.dp))
-                        .clickable {
-                            logoTapCount++
-                            if (logoTapCount >= 10) {
-                                logoTapCount = 0
-                                Toast.makeText(context, "تم تفعيل وضع المالك بنجاح", Toast.LENGTH_SHORT).show()
-                                onOpenOwnerDatabaseSecret?.invoke()
-                            }
+                        .background(if (isHolding) EmeraldContainer else DarkButtonBg)
+                        .border(
+                            1.2.dp,
+                            if (isHolding) EmeraldPrimary else EmeraldPrimary.copy(alpha = 0.7f),
+                            RoundedCornerShape(14.dp)
+                        )
+                        .pointerInput(Unit) {
+                            detectTapGestures(
+                                onPress = {
+                                    isHolding = true
+                                    holdSeconds = 0
+                                    pressJob?.cancel()
+                                    pressJob = coroutineScope.launch {
+                                        for (sec in 1..30) {
+                                            delay(1000L)
+                                            holdSeconds = sec
+                                            if (sec == 10 || sec == 20) {
+                                                Toast.makeText(context, "استمر بالضغط على الشعار: متبقي ${30 - sec} ثانية للوحة المالك", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                        Toast.makeText(context, "تم التحقق من الضغط لمدة 30 ثانية! جاري فتح لوحة المالك...", Toast.LENGTH_LONG).show()
+                                        onOpenOwnerDatabaseSecret?.invoke()
+                                    }
+                                    try {
+                                        awaitRelease()
+                                    } finally {
+                                        isHolding = false
+                                        pressJob?.cancel()
+                                        pressJob = null
+                                    }
+                                }
+                            )
                         },
                     contentAlignment = Alignment.Center
                 ) {

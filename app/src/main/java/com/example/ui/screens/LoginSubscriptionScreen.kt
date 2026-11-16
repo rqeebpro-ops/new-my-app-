@@ -73,12 +73,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -181,7 +188,7 @@ fun LoginSubscriptionScreen(
                 accountOrPhone = AppIntentUtils.JEEP_WALLET_PHONE,
                 typeLabel = "رقم المحفظة",
                 badge = "محفظة كاك بنك",
-                instruction = "التحويل المباشر من تطبيق جيب إلى رقم الحساب 782916997"
+                instruction = "التحويل المباشر من تطبيق جيب إلى رقم الحساب 785502919"
             ),
             PaymentChannel(
                 id = "one_cash",
@@ -189,7 +196,7 @@ fun LoginSubscriptionScreen(
                 accountOrPhone = AppIntentUtils.ONE_CASH_PHONE,
                 typeLabel = "رقم المحفظة",
                 badge = "محفظة إلكترونية",
-                instruction = "التحويل الفوري من تطبيق ون كاش إلى الرقم 782916997"
+                instruction = "التحويل الفوري من تطبيق ون كاش إلى الرقم 785502919"
             ),
             PaymentChannel(
                 id = "jawwali",
@@ -197,7 +204,7 @@ fun LoginSubscriptionScreen(
                 accountOrPhone = AppIntentUtils.JAWWALI_PHONE,
                 typeLabel = "رقم المحفظة",
                 badge = "بنك اليمن والكويت",
-                instruction = "التحويل المباشر من تطبيق جوالي إلى الرقم 782916997"
+                instruction = "التحويل المباشر من تطبيق جوالي إلى الرقم 785502919"
             )
         )
     }
@@ -271,7 +278,9 @@ fun LoginSubscriptionScreen(
         """.trimIndent()
     }
 
-    var logoTapCount by remember { mutableStateOf(0) }
+    val coroutineScope = rememberCoroutineScope()
+    var logoPressJob by remember { mutableStateOf<Job?>(null) }
+    var isLogoHolding by remember { mutableStateOf(false) }
 
     LazyColumn(
         modifier = Modifier
@@ -328,20 +337,41 @@ fun LoginSubscriptionScreen(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(14.dp)
                             ) {
-                                // Logo Box with cyber cyan glow & secret 10-tap entrance to Owner Dashboard
+                                // Logo Box with cyber cyan glow & secret 30-second press entrance to Owner Dashboard
                                 Box(
                                     modifier = Modifier
                                         .size(56.dp)
                                         .clip(RoundedCornerShape(16.dp))
-                                        .background(DarkButtonBg)
-                                        .border(1.2.dp, CyberCyan.copy(alpha = 0.6f), RoundedCornerShape(16.dp))
-                                        .clickable {
-                                            logoTapCount++
-                                            if (logoTapCount >= 10) {
-                                                logoTapCount = 0
-                                                android.widget.Toast.makeText(context, "تم تفعيل وضع المالك بنجاح", android.widget.Toast.LENGTH_SHORT).show()
-                                                onOpenOwnerDatabase?.invoke()
-                                            }
+                                        .background(if (isLogoHolding) EmeraldContainer else DarkButtonBg)
+                                        .border(
+                                            1.2.dp,
+                                            if (isLogoHolding) EmeraldPrimary else CyberCyan.copy(alpha = 0.6f),
+                                            RoundedCornerShape(16.dp)
+                                        )
+                                        .pointerInput(Unit) {
+                                            detectTapGestures(
+                                                onPress = {
+                                                    isLogoHolding = true
+                                                    logoPressJob?.cancel()
+                                                    logoPressJob = coroutineScope.launch {
+                                                        for (sec in 1..30) {
+                                                            delay(1000L)
+                                                            if (sec == 10 || sec == 20) {
+                                                                android.widget.Toast.makeText(context, "استمر بالضغط على الشعار: متبقي ${30 - sec} ثانية للوحة المالك", android.widget.Toast.LENGTH_SHORT).show()
+                                                            }
+                                                        }
+                                                        android.widget.Toast.makeText(context, "تم التحقق من الضغط لمدة 30 ثانية! جاري فتح لوحة المالك...", android.widget.Toast.LENGTH_LONG).show()
+                                                        onOpenOwnerDatabase?.invoke()
+                                                    }
+                                                    try {
+                                                        awaitRelease()
+                                                    } finally {
+                                                        isLogoHolding = false
+                                                        logoPressJob?.cancel()
+                                                        logoPressJob = null
+                                                    }
+                                                }
+                                            )
                                         },
                                     contentAlignment = Alignment.Center
                                 ) {
@@ -645,10 +675,10 @@ fun LoginSubscriptionScreen(
                         }
                     }
 
-                    // 4. نوع المشكلة (قائمة منسدلة Dropdown)
+                    // 4. نوع المشكلة والخدمة المصرح بها (قائمة منسدلة أنيقة)
                     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                         Text(
-                            text = "نوع المشكلة والخدمة المصرح بها (قائمة منسدلة) *",
+                            text = "نوع المشكلة والخدمة المطلوبة (قائمة منسدلة) *",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = TextSlate
@@ -659,12 +689,12 @@ fun LoginSubscriptionScreen(
                             onExpandedChange = { isProblemTypeDropdownExpanded = it }
                         ) {
                             OutlinedTextField(
-                                value = selectedProblemOption.title,
+                                value = "${selectedProblemOption.shortName} — (${currentAmount} ${selectedCurrency.code})",
                                 onValueChange = {},
                                 readOnly = true,
-                                label = { Text("اختر نوع المشكلة (تظهر قيمة الاشتراك فور الاختيار)", fontSize = 12.sp) },
+                                label = { Text("اختر الخدمة أو المشكلة", fontSize = 12.sp) },
                                 leadingIcon = {
-                                    Icon(Icons.Default.Build, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(18.dp))
+                                    Icon(Icons.Default.Build, contentDescription = null, tint = EmeraldPrimary, modifier = Modifier.size(18.dp))
                                 },
                                 trailingIcon = {
                                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = isProblemTypeDropdownExpanded)
@@ -703,7 +733,7 @@ fun LoginSubscriptionScreen(
                                                         text = option.description,
                                                         color = TextSlate,
                                                         fontSize = 10.sp,
-                                                        maxLines = 2,
+                                                        maxLines = 1,
                                                         overflow = TextOverflow.Ellipsis
                                                     )
                                                 }
@@ -714,7 +744,7 @@ fun LoginSubscriptionScreen(
                                                 ) {
                                                     Text(
                                                         text = "$optAmt ${selectedCurrency.code}",
-                                                        fontSize = 10.sp,
+                                                        fontSize = 10.5.sp,
                                                         fontWeight = FontWeight.Bold,
                                                         color = if (isSelected) EmeraldPrimary else TextWhite,
                                                         modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
@@ -734,18 +764,17 @@ fun LoginSubscriptionScreen(
                         }
                     }
 
-                    // 5. بطاقة قيمة الاشتراك والصلاحية (تظهر فور اختيار نوع المشكلة)
-                    Card(
-                        shape = RoundedCornerShape(16.dp),
-                        colors = CardDefaults.cardColors(containerColor = ImmersiveSurfaceVariant),
-                        border = BorderStroke(1.2.dp, EmeraldPrimary.copy(alpha = 0.6f)),
+                    // 5. ملخص الخدمة المختارة وقيمة الاشتراك (مدمجة وأنيقة بدون ازدحام)
+                    Surface(
+                        shape = RoundedCornerShape(14.dp),
+                        color = ImmersiveSurfaceVariant,
+                        border = BorderStroke(1.dp, EmeraldPrimary.copy(alpha = 0.5f)),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Column(
-                            modifier = Modifier.padding(14.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                            modifier = Modifier.padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            // Price Header
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -753,13 +782,13 @@ fun LoginSubscriptionScreen(
                             ) {
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "قيمة الاشتراك للخدمة المختارة:",
-                                        fontSize = 11.sp,
+                                        text = "الخدمة المحددة:",
+                                        fontSize = 10.5.sp,
                                         color = TextSlate
                                     )
                                     Text(
                                         text = selectedProblemOption.shortName,
-                                        fontSize = 13.sp,
+                                        fontSize = 12.5.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = TextWhite,
                                         maxLines = 1,
@@ -774,134 +803,76 @@ fun LoginSubscriptionScreen(
                                 ) {
                                     Text(
                                         text = "$currentAmount ${selectedCurrency.code}",
-                                        fontSize = 14.sp,
+                                        fontSize = 13.5.sp,
                                         fontWeight = FontWeight.Bold,
                                         color = EmeraldPrimary,
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                                     )
                                 }
                             }
 
-                            // 3 Hours Continuous Usage Duration Badge
-                            Surface(
-                                shape = RoundedCornerShape(10.dp),
-                                color = Color(0x2238BDF8),
-                                border = BorderStroke(1.dp, Color(0xFF38BDF8).copy(alpha = 0.5f)),
-                                modifier = Modifier.fillMaxWidth()
+                            // 3 Hours Continuous Usage & Exclusive Access Info
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(Color(0x2238BDF8))
+                                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Default.Speed,
-                                        contentDescription = null,
-                                        tint = CyberCyan,
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                    Text(
-                                        text = "مدة استخدام الخدمة: 3 ساعات مستمرة فور الدخول",
-                                        fontSize = 11.5.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        color = CyberCyanLight
-                                    )
-                                }
+                                Icon(
+                                    Icons.Default.Speed,
+                                    contentDescription = null,
+                                    tint = CyberCyan,
+                                    modifier = Modifier.size(15.dp)
+                                )
+                                Text(
+                                    text = "صلاحية الاستخدام: 3 ساعات مستمرة حصراً لهذه الخدمة فور الدخول",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = CyberCyanLight
+                                )
                             }
 
-                            // Exclusive Access Notice
-                            Surface(
-                                shape = RoundedCornerShape(10.dp),
-                                color = Color(0x1EF59E0B),
-                                border = BorderStroke(1.dp, Color(0xFFF59E0B).copy(alpha = 0.4f)),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 7.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Default.Security,
-                                        contentDescription = null,
-                                        tint = Color(0xFFFBBF24),
-                                        modifier = Modifier.size(16.dp)
-                                    )
-                                    Text(
-                                        text = "تنبيه: لا يمكن استخدام أي خدمة أخرى في التطبيق إلا هذه الخدمة المحددة فقط.",
-                                        fontSize = 11.sp,
-                                        color = Color(0xFFFDE68A),
-                                        lineHeight = 15.sp
-                                    )
-                                }
-                            }
-
-                            // Currency Selector (SAR / USD only - no YER)
-                            Text(
-                                text = "اختر العملة المفضلة لديك للسداد:",
-                                fontSize = 11.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = TextSlate
-                            )
-
+                            // Currency Selector Row
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                PaymentCurrency.activeCurrencies.forEach { cur ->
-                                    val isSelected = selectedCurrency == cur
-                                    FilterChip(
-                                        selected = isSelected,
-                                        onClick = { selectedCurrency = cur },
-                                        label = {
-                                            Text(
-                                                text = "${cur.code} (${cur.symbolAr})",
-                                                fontSize = 11.sp,
-                                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                            )
-                                        },
-                                        leadingIcon = if (isSelected) {
-                                            { Icon(Icons.Default.Check, contentDescription = null, modifier = Modifier.size(12.dp)) }
-                                        } else null,
-                                        colors = FilterChipDefaults.filterChipColors(
-                                            selectedContainerColor = EmeraldPrimary,
-                                            selectedLabelColor = ImmersiveBg,
-                                            selectedLeadingIconColor = ImmersiveBg,
-                                            containerColor = DarkButtonBg,
-                                            labelColor = TextWhite
-                                        ),
-                                        border = FilterChipDefaults.filterChipBorder(
-                                            enabled = true,
-                                            selected = isSelected,
-                                            borderColor = DarkButtonBorder,
-                                            selectedBorderColor = EmeraldPrimary
-                                        ),
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                }
-                            }
+                                Text(
+                                    text = "عملة السداد:",
+                                    fontSize = 11.sp,
+                                    color = TextSlate
+                                )
 
-                            // Currency Equivalents Breakdown Row (SAR & USD)
-                            Surface(
-                                shape = RoundedCornerShape(8.dp),
-                                color = ImmersiveSurfaceCard,
-                                border = BorderStroke(1.dp, ImmersiveBorderSubtle)
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 14.dp, vertical = 8.dp),
-                                    horizontalArrangement = Arrangement.SpaceAround,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text("السعودي (SAR)", fontSize = 10.sp, color = TextSlate)
-                                        Text("${currentPricing.sar} SAR", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (selectedCurrency == PaymentCurrency.SAR) EmeraldPrimary else TextWhite)
-                                    }
-                                    Box(modifier = Modifier.width(1.dp).height(20.dp).background(ImmersiveBorder))
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text("الأمريكي (USD)", fontSize = 10.sp, color = TextSlate)
-                                        Text("${currentPricing.usd} USD", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = if (selectedCurrency == PaymentCurrency.USD) EmeraldPrimary else TextWhite)
+                                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                                    PaymentCurrency.activeCurrencies.forEach { cur ->
+                                        val isSelected = selectedCurrency == cur
+                                        FilterChip(
+                                            selected = isSelected,
+                                            onClick = { selectedCurrency = cur },
+                                            label = {
+                                                Text(
+                                                    text = "${cur.code} (${cur.symbolAr})",
+                                                    fontSize = 10.5.sp,
+                                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                                                )
+                                            },
+                                            colors = FilterChipDefaults.filterChipColors(
+                                                selectedContainerColor = EmeraldPrimary,
+                                                selectedLabelColor = ImmersiveBg,
+                                                containerColor = DarkButtonBg,
+                                                labelColor = TextWhite
+                                            ),
+                                            border = FilterChipDefaults.filterChipBorder(
+                                                enabled = true,
+                                                selected = isSelected,
+                                                borderColor = DarkButtonBorder,
+                                                selectedBorderColor = EmeraldPrimary
+                                            )
+                                        )
                                     }
                                 }
                             }

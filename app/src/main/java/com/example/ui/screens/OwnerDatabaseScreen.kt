@@ -117,6 +117,7 @@ import com.example.ui.theme.ImmersiveSurface
 import com.example.ui.theme.ImmersiveSurfaceCard
 import com.example.ui.theme.ImmersiveSurfaceVariant
 import com.example.ui.theme.StatusError
+import com.example.model.RqTechCatalog
 import com.example.ui.theme.StatusSuccess
 import com.example.ui.theme.StatusWarning
 import com.example.ui.theme.TextMuted
@@ -266,7 +267,7 @@ private fun OwnerAuthGate(
                         errorMessage = null
                     },
                     label = { Text("رقم هاتف المالك", fontSize = 13.sp) },
-                    placeholder = { Text("مثال: 785502919 أو 782916997", fontSize = 13.sp) },
+                    placeholder = { Text("مثال: 785502919", fontSize = 13.sp) },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     modifier = Modifier.fillMaxWidth(),
@@ -412,6 +413,14 @@ private fun OwnerDatabaseDashboard(
     var showGenerateCodeDialog by remember { mutableStateOf(false) }
     var codeToDelete by remember { mutableStateOf<ActivationCodeEntity?>(null) }
 
+    // State for Rq-300-tech Codes File Tab
+    var rqSearchQuery by remember { mutableStateOf("") }
+    val rqTechCodesList: List<String> = remember { RqTechCatalog.codes }
+    val filteredRqCodes: List<String> = remember(rqSearchQuery) {
+        if (rqSearchQuery.isBlank()) rqTechCodesList
+        else rqTechCodesList.filter { it.contains(rqSearchQuery.trim(), ignoreCase = true) }
+    }
+
     val filteredSubscriptions = subscriptions.filter { sub ->
         val matchesQuery = searchQuery.isBlank() ||
                 sub.fullName.contains(searchQuery, ignoreCase = true) ||
@@ -541,7 +550,7 @@ private fun OwnerDatabaseDashboard(
 
                     HorizontalDivider(color = ImmersiveBorder)
 
-                    // Navigation Tabs: المشتركون والمدفوعات vs أكواد التفعيل
+                    // Navigation Tabs: المشتركون والمدفوعات vs أكواد التفعيل vs حزمة أكواد Rq-300-tech
                     TabRow(
                         selectedTabIndex = selectedDashboardTab,
                         containerColor = ImmersiveSurfaceVariant,
@@ -564,18 +573,18 @@ private fun OwnerDatabaseDashboard(
                             text = {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
                                     Icon(
                                         Icons.Default.Storage,
                                         contentDescription = null,
-                                        modifier = Modifier.size(16.dp),
+                                        modifier = Modifier.size(15.dp),
                                         tint = if (selectedDashboardTab == 0) EmeraldPrimary else TextSlate
                                     )
                                     Text(
-                                        text = "المشتركون والإيرادات",
+                                        text = "المشتركون",
                                         fontWeight = if (selectedDashboardTab == 0) FontWeight.Bold else FontWeight.Normal,
-                                        fontSize = 12.5.sp,
+                                        fontSize = 11.5.sp,
                                         color = if (selectedDashboardTab == 0) TextWhite else TextSlate
                                     )
                                 }
@@ -588,19 +597,43 @@ private fun OwnerDatabaseDashboard(
                             text = {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                                 ) {
                                     Icon(
                                         Icons.Default.LockOpen,
                                         contentDescription = null,
-                                        modifier = Modifier.size(16.dp),
+                                        modifier = Modifier.size(15.dp),
                                         tint = if (selectedDashboardTab == 1) AccentTeal else TextSlate
                                     )
                                     Text(
-                                        text = "أكواد التفعيل (${activationCodes.size})",
+                                        text = "أكواد التفعيل",
                                         fontWeight = if (selectedDashboardTab == 1) FontWeight.Bold else FontWeight.Normal,
-                                        fontSize = 12.5.sp,
+                                        fontSize = 11.5.sp,
                                         color = if (selectedDashboardTab == 1) TextWhite else TextSlate
+                                    )
+                                }
+                            }
+                        )
+
+                        Tab(
+                            selected = selectedDashboardTab == 2,
+                            onClick = { selectedDashboardTab = 2 },
+                            text = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Default.Star,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(15.dp),
+                                        tint = if (selectedDashboardTab == 2) AccentOrange else TextSlate
+                                    )
+                                    Text(
+                                        text = "أكواد Rq-tech (300)",
+                                        fontWeight = if (selectedDashboardTab == 2) FontWeight.Bold else FontWeight.Normal,
+                                        fontSize = 11.sp,
+                                        color = if (selectedDashboardTab == 2) AccentOrange else TextSlate
                                     )
                                 }
                             }
@@ -1154,6 +1187,211 @@ private fun OwnerDatabaseDashboard(
                             codeToDelete = codeEntity
                         }
                     )
+                }
+            }
+        }
+
+        // ==================== TAB 2: ملف أكواد Rq-300-tech (300 كود معتمد) ====================
+        if (selectedDashboardTab == 2) {
+            item {
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = ImmersiveSurfaceCard),
+                    border = BorderStroke(1.2.dp, AccentOrange.copy(alpha = 0.5f)),
+                    shape = RoundedCornerShape(20.dp),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text(
+                                    text = "ملف أكواد Rq-300-tech الرسمية",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = TextWhite
+                                )
+                                Text(
+                                    text = "قائمة الأكواد المعتمدة الخاصة بمركز رقيب (300 كود حصري)",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = TextSlate
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .background(AccentOrangeContainer),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(Icons.Default.Star, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(20.dp))
+                            }
+                        }
+
+                        HorizontalDivider(color = ImmersiveBorderSubtle)
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text("إجمالي الأكواد بالملف", fontSize = 11.sp, color = TextSlate)
+                                Text("${rqTechCodesList.size} كود معتمد", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = AccentOrange)
+                            }
+
+                            Button(
+                                onClick = {
+                                    val allText = rqTechCodesList.joinToString("\n")
+                                    AppIntentUtils.copyToClipboard(context, "ملف أكواد Rq-300-tech", allText)
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = DarkButtonBg, contentColor = TextWhite),
+                                border = BorderStroke(1.dp, AccentOrange.copy(alpha = 0.6f)),
+                                shape = RoundedCornerShape(10.dp),
+                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 6.dp)
+                            ) {
+                                Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(14.dp), tint = AccentOrange)
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text("نسخ جميع الأكواد", fontSize = 11.5.sp, color = AccentOrange)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Search Bar for Rq codes
+            item {
+                OutlinedTextField(
+                    value = rqSearchQuery,
+                    onValueChange = { rqSearchQuery = it },
+                    leadingIcon = {
+                        Icon(Icons.Default.Search, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(18.dp))
+                    },
+                    trailingIcon = {
+                        if (rqSearchQuery.isNotEmpty()) {
+                            IconButton(onClick = { rqSearchQuery = "" }) {
+                                Icon(Icons.Default.Close, contentDescription = "مسح", tint = TextSlate, modifier = Modifier.size(16.dp))
+                            }
+                        }
+                    },
+                    placeholder = { Text("ابحث في ملف الأكواد (مثال: Rq-0324 أو 2779)...", fontSize = 12.5.sp) },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = AccentOrange,
+                        unfocusedBorderColor = ImmersiveBorder,
+                        focusedTextColor = TextWhite,
+                        unfocusedTextColor = TextWhite,
+                        cursorColor = AccentOrange,
+                        focusedContainerColor = ImmersiveSurfaceCard,
+                        unfocusedContainerColor = ImmersiveSurfaceCard
+                    ),
+                    singleLine = true
+                )
+            }
+
+            // Results count
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "الأكواد المعروضة (${filteredRqCodes.size}):",
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = TextWhite
+                    )
+                    Text(
+                        text = "اضغط على أي كود لنسخه أو إرساله للعميل بالواتساب",
+                        fontSize = 11.sp,
+                        color = TextSlate
+                    )
+                }
+            }
+
+            // Display grid of codes
+            items(filteredRqCodes) { rqCode ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = ImmersiveSurfaceCard),
+                    border = BorderStroke(1.dp, ImmersiveBorder),
+                    shape = RoundedCornerShape(14.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 14.dp, vertical = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(34.dp)
+                                    .clip(RoundedCornerShape(8.dp))
+                                    .background(DarkButtonBg)
+                                    .border(1.dp, AccentOrange.copy(alpha = 0.5f), RoundedCornerShape(8.dp)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(Icons.Default.Lock, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(16.dp))
+                            }
+                            Column {
+                                Text(
+                                    text = rqCode,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.ExtraBold,
+                                    fontFamily = FontFamily.Monospace,
+                                    color = TextWhite,
+                                    letterSpacing = 1.sp
+                                )
+                                Text(
+                                    text = "كود تفعيل رسمي صالح لتسجيل المشتركين",
+                                    fontSize = 10.5.sp,
+                                    color = TextSlate
+                                )
+                            }
+                        }
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(6.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    AppIntentUtils.copyToClipboard(context, "كود رقيب برو", rqCode)
+                                },
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(DarkButtonBg)
+                            ) {
+                                Icon(Icons.Default.ContentCopy, contentDescription = "نسخ", tint = EmeraldPrimary, modifier = Modifier.size(15.dp))
+                            }
+
+                            IconButton(
+                                onClick = {
+                                    val msg = "مرحباً بك، كود تفعيل اشتراكك في تطبيق رقيب برو هو:\n$rqCode\nشكراً لاختيارك مركز رقيب للبرمجة والتسويق."
+                                    AppIntentUtils.openWhatsApp(context, msg)
+                                },
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
+                                    .background(DarkButtonBg)
+                            ) {
+                                Icon(Icons.Default.Chat, contentDescription = "واتساب", tint = AccentTeal, modifier = Modifier.size(15.dp))
+                            }
+                        }
+                    }
                 }
             }
         }

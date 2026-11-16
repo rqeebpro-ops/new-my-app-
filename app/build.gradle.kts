@@ -17,8 +17,8 @@ android {
     applicationId = "com.aistudio.raqeeb.app"
     minSdk = 24
     targetSdk = 36
-    versionCode = 6
-    versionName = "3.1.0"
+    versionCode = 7
+    versionName = "3.2.0-rqeebpro.tech"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

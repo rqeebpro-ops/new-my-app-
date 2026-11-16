@@ -120,7 +120,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         code = "7829",
                         subscriptionType = "اشتراك التسويق الرقمي واسترجاع البيانات",
                         clientName = "كود احتياطي معتمد",
-                        clientPhone = "782916997",
+                        clientPhone = "785502919",
                         priceAmount = 4000,
                         currency = "YER",
                         durationLabel = "سنة كاملة",

@@ -30,14 +30,17 @@ object AppIntentUtils {
     }
 
     fun isValidActivationPin(pin: String): Boolean {
-        return pin.trim() in VALID_ACTIVATION_PINS
+        val clean = pin.trim()
+        if (clean in VALID_ACTIVATION_PINS) return true
+        if (clean.length == 4 && com.example.model.RqTechCatalog.codes.any { it.contains(clean) }) return true
+        return false
     }
 
     // Official Payment Accounts
     const val KURAMI_ACCOUNT = "3001845477"
-    const val JEEP_WALLET_PHONE = "782916997"
-    const val ONE_CASH_PHONE = "782916997"
-    const val JAWWALI_PHONE = "782916997"
+    const val JEEP_WALLET_PHONE = "785502919"
+    const val ONE_CASH_PHONE = "785502919"
+    const val JAWWALI_PHONE = "785502919"
 
     const val SERVICE_PRICE_YER = 2000
     const val SERVICE_PRICE_SAR = 15

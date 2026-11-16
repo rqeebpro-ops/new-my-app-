@@ -200,7 +200,7 @@ fun RequestServiceDialog(
                         value = clientPhone,
                         onValueChange = { clientPhone = it },
                         label = { Text("رقم هاتفك للتواصل (واتساب)") },
-                        placeholder = { Text("مثال: 782916997") },
+                        placeholder = { Text("مثال: 785502919") },
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         colors = textFieldColors,
